@@ -28,7 +28,7 @@ use yii2tech\filestorage\StorageInterface;
  *     'class' => 'yii2tech\filestorage\hub\Storage',
  *     'storages' => [
  *         [
- *             'class' => 'yii2tech\filestorage\filesystem\Storage',
+ *             'class' => 'yii2tech\filestorage\local\Storage',
  *             ...
  *             'buckets' => [
  *                 'fileSystemBucket' => [...],

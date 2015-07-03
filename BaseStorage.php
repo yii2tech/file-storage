@@ -89,7 +89,7 @@ abstract class BaseStorage extends Component implements StorageInterface
 
     /**
      * Gets the list of available bucket instances.
-     * @return array set of bucket instances.
+     * @return BucketInterface[] set of bucket instances.
      */
     public function getBuckets()
     {
@@ -104,7 +104,7 @@ abstract class BaseStorage extends Component implements StorageInterface
      * Gets the bucket instance by name.
      * @param string $bucketName - name of the bucket.
      * @throws InvalidParamException if bucket does not exist.
-     * @return array set of bucket instances.
+     * @return BucketInterface set of bucket instances.
      */
     public function getBucket($bucketName)
     {
