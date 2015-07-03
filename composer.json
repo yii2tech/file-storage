@@ -1,0 +1,30 @@
+{
+    "name": "yii2tech/file-storage",
+    "description": "File system abstraction layer for Yii2",
+    "keywords": ["yii2", "file", "storage", "abstraction", "amazon", "S3"],
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/yii2tech/file-storage/issues",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "https://github.com/yii2tech/file-storage/wiki",
+        "source": "https://github.com/yii2tech/file-storage"
+    },
+    "authors": [
+        {
+            "name": "Paul Klimov",
+            "email": "klimov.paul@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": { "yii2tech\\filestorage\\": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
