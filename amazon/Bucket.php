@@ -7,6 +7,8 @@
 
 namespace yii2tech\filestorage\amazon;
 
+use Aws\Common\Enum\Region;
+use Aws\S3\Enum\CannedAcl;
 use yii\base\InvalidConfigException;
 use yii\log\Logger;
 use yii2tech\filestorage\BucketSubDirTemplate;
@@ -19,9 +21,7 @@ use yii2tech\filestorage\BucketSubDirTemplate;
  * @see https://github.com/aws/aws-sdk-php
  * @see http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/service-s3.html
  *
- * @property string $urlName public alias of {@link _urlName}.
- * @property string $region public alias of {@link _region}.
- * @property mixed $acl public alias of {@link _acl}.
+ * @property string $urlName storage DNS URL name.
  * @method Storage getStorage()
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
@@ -58,12 +58,16 @@ class Bucket extends BucketSubDirTemplate
      * @var mixed bucket ACL policy.
      * You can setup this value as a short alias of the real region name
      * according the following map:
-     * <pre>
+     *
+     * ```php
      * 'private' => \Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS
-     * '' =>
-     * '' =>
-     * '' => 
-     * </pre>
+     * 'public' =>\Aws\S3\Enum\CannedAcl::PUBLIC_READ
+     * 'open' =>\Aws\S3\Enum\CannedAcl::PUBLIC_READ_WRITE
+     * 'auth_read' =>\Aws\S3\Enum\CannedAcl::AUTHENTICATED_READ
+     * 'owner_read' =>\Aws\S3\Enum\CannedAcl::BUCKET_OWNER_READ
+     * 'owner_full_control' =>\Aws\S3\Enum\CannedAcl::BUCKET_OWNER_FULL_CONTROL
+     * ```
+     *
      * @see AmazonS3
      */
     public $acl = 'private';
@@ -71,25 +75,30 @@ class Bucket extends BucketSubDirTemplate
      * @var string actual value of {@link region}.
      * This field is for the internal usage only.
      */
-    protected $_actualRegion = '';
+    private $_actualRegion;
     /**
      * @var string actual value of {@link acl}.
      * This field is for the internal usage only.
      */
-    protected $_actualAcl = '';
+    private $_actualAcl;
     /**
      * @var array internal cache data.
      * This field is for the internal usage only.
      */
-    protected $_internalCache = array();
+    private $_internalCache = [];
 
-    // Set / Get :
 
+    /**
+     * @param string $urlName storage DNS URL name.
+     */
     public function setUrlName($urlName)
     {
         $this->_urlName = $urlName;
     }
 
+    /**
+     * @return string storage DNS URL name.
+     */
     public function getUrlName()
     {
         if ($this->_urlName === null) {
@@ -180,31 +189,31 @@ class Bucket extends BucketSubDirTemplate
         switch ($region) {
             // USA :
             case 'us_e1': {
-                return \Aws\Common\Enum\Region::US_EAST_1;
+                return Region::US_EAST_1;
             }
             case 'us_w1': {
-                return \Aws\Common\Enum\Region::US_WEST_1;
+                return Region::US_WEST_1;
             }
             case 'us_w2': {
-                return \Aws\Common\Enum\Region::US_WEST_2;
+                return Region::US_WEST_2;
             }
             // Europe :
             case 'eu_w1': {
-                return \Aws\Common\Enum\Region::EU_WEST_1;
+                return Region::EU_WEST_1;
             }
             // AP :
             case 'apac_se1': {
-                return \Aws\Common\Enum\Region::AP_SOUTHEAST_1;
+                return Region::AP_SOUTHEAST_1;
             }
             case 'apac_se2': {
-                return \Aws\Common\Enum\Region::AP_SOUTHEAST_2;
+                return Region::AP_SOUTHEAST_2;
             }
             case 'apac_ne1': {
-                return \Aws\Common\Enum\Region::AP_NORTHEAST_1;
+                return Region::AP_NORTHEAST_1;
             }
             // South America :
             case 'sa_e1': {
-                return \Aws\Common\Enum\Region::SA_EAST_1;
+                return Region::SA_EAST_1;
             }
             default: {
                 return $region;
@@ -238,22 +247,22 @@ class Bucket extends BucketSubDirTemplate
     {
         switch ($acl) {
             case 'private': {
-                return \Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS;
+                return CannedAcl::PRIVATE_ACCESS;
             }
             case 'public': {
-                return \Aws\S3\Enum\CannedAcl::PUBLIC_READ;
+                return CannedAcl::PUBLIC_READ;
             }
             case 'open': {
-                return \Aws\S3\Enum\CannedAcl::PUBLIC_READ_WRITE;
+                return CannedAcl::PUBLIC_READ_WRITE;
             }
             case 'auth_read': {
-                return \Aws\S3\Enum\CannedAcl::AUTHENTICATED_READ;
+                return CannedAcl::AUTHENTICATED_READ;
             }
             case 'owner_read': {
-                return \Aws\S3\Enum\CannedAcl::BUCKET_OWNER_READ;
+                return CannedAcl::BUCKET_OWNER_READ;
             }
             case 'owner_full_control': {
-                return \Aws\S3\Enum\CannedAcl::BUCKET_OWNER_FULL_CONTROL;
+                return CannedAcl::BUCKET_OWNER_FULL_CONTROL;
             }
             default: {
                 return $acl;
@@ -449,7 +458,7 @@ class Bucket extends BucketSubDirTemplate
             $this->log("file '{$srcFileRef['bucket']}/{$srcFileRef['filename']}' has been copied to '{$destFileRef['bucket']}/{$destFileRef['filename']}'");
             $result = true;
         } catch (\Exception $exception) {
-            $this->log("Unable to copy file from '{$srcFileRef['bucket']}/{$srcFileRef['filename']}' to '{$destFileRef['bucket']}/{$destFileRef['filename']}':" . $exception->getMessage() . "!", CLogger::LEVEL_ERROR);
+            $this->log("Unable to copy file from '{$srcFileRef['bucket']}/{$srcFileRef['filename']}' to '{$destFileRef['bucket']}/{$destFileRef['filename']}':" . $exception->getMessage() . "!", Logger::LEVEL_ERROR);
             $result = false;
         }
         return $result;

@@ -1,6 +1,6 @@
 {
     "name": "yii2tech/file-storage",
-    "description": "File system abstraction layer for Yii2",
+    "description": "File storage abstraction layer for Yii2",
     "keywords": ["yii2", "file", "storage", "abstraction", "amazon", "S3"],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",

@@ -7,6 +7,7 @@
 
 namespace yii2tech\filestorage\amazon;
 
+use Aws\S3\S3Client;
 use yii\base\InvalidConfigException;
 use yii2tech\filestorage\BaseStorage;
 
@@ -14,11 +15,38 @@ use yii2tech\filestorage\BaseStorage;
  * Storage introduces the file storage based on
  * Amazon Simple Storage Service (S3).
  *
+ * In order to use this storage you need to install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2:
+ *
+ * ```
+ * composer require --prefer-dist aws/aws-sdk-php:~2.0
+ * ```
+ *
+ * Configuration example:
+ *
+ * ```php
+ * 'fileStorage' => [
+ *     'class' => 'yii2tech\filestorage\amazon\Storage',
+ *     'awsKey' => 'AWSKEY',
+ *     'awsSecretKey' => 'AWSSECRETKEY',
+ *     'buckets' => [
+ *         'tempFiles' => [
+ *             'region' => 'eu_w1',
+ *             'acl' => 'private',
+ *         ],
+ *         'imageFiles' => [
+ *             'region' => 'eu_w1',
+ *             'acl' => 'public',
+ *         ],
+ *     ]
+ * ]
+ * ```
+ *
  * @see Bucket
  * @see https://github.com/aws/aws-sdk-php
  * @see http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/service-s3.html
  *
- * @property \Aws\S3\S3Client $amazonS3 instance of the Amazon S3 client.
+ * @property S3Client $amazonS3 instance of the Amazon S3 client.
+ * @method Bucket getBucket($bucketName)
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
@@ -40,11 +68,15 @@ class Storage extends BaseStorage
      */
     public $awsSecretKey = '';
     /**
-     * @var \Aws\S3\S3Client instance of the Amazon S3 client.
+     * @var S3Client instance of the Amazon S3 client.
      */
     private $_amazonS3;
 
 
+    /**
+     * @param S3Client $amazonS3 Amazon S3 client.
+     * @throws InvalidConfigException on invalid argument.
+     */
     public function setAmazonS3($amazonS3)
     {
         if (!is_object($amazonS3)) {
@@ -54,7 +86,7 @@ class Storage extends BaseStorage
     }
 
     /**
-     * @return \Aws\S3\S3Client
+     * @return S3Client Amazon S3 client instance.
      */
     public function getAmazonS3()
     {
@@ -66,7 +98,7 @@ class Storage extends BaseStorage
 
     /**
      * Initializes the instance of the Amazon S3 service gateway.
-     * @return \Aws\S3\S3Client Amazon S3 client instance.
+     * @return S3Client Amazon S3 client instance.
      */
     protected function createAmazonS3()
     {
@@ -74,6 +106,6 @@ class Storage extends BaseStorage
             'key' => $this->awsKey,
             'secret' => $this->awsSecretKey,
         ];
-        return \Aws\S3\S3Client::factory($amazonS3Options);
+        return S3Client::factory($amazonS3Options);
     }
 }
