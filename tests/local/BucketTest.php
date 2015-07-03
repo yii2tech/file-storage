@@ -3,6 +3,7 @@
 namespace yii2tech\tests\unit\filestorage\local;
 
 use Yii;
+use yii\helpers\FileHelper;
 use yii2tech\filestorage\local\Storage;
 use yii2tech\filestorage\local\Bucket;
 use yii2tech\tests\unit\filestorage\TestCase;
@@ -10,22 +11,17 @@ use yii2tech\tests\unit\filestorage\TestCase;
 /**
  * Test case for the extension [[Bucket]].
  * @see Bucket
+ *
+ * @group local
  */
 class BucketTest extends TestCase
 {
     public function tearDown()
     {
-        $testBasePath = $this->getTestBasePath();
-        if (file_exists($testBasePath)) {
-            $command = "rm -r {$testBasePath}";
-            exec($command);
-        }
+        FileHelper::removeDirectory($this->getTestBasePath());
+        FileHelper::removeDirectory($this->getTestTmpPath());
 
-        $testTmpPath = $this->getTestTmpPath();
-        if (file_exists($testTmpPath)) {
-            $command = "rm -r {$testTmpPath}";
-            exec($command);
-        }
+        parent::tearDown();
     }
 
     /**
@@ -34,8 +30,7 @@ class BucketTest extends TestCase
      */
     protected function getTestBasePath()
     {
-        $basePath = Yii::getPathOfAlias('application.runtime') . DIRECTORY_SEPARATOR . 'test_file_storage';
-        return $basePath;
+        return Yii::getAlias('@yii2tech/tests/unit/filestorage/runtime') . DIRECTORY_SEPARATOR . 'test_file_storage';
     }
 
     /**
@@ -44,11 +39,9 @@ class BucketTest extends TestCase
      */
     protected function getTestTmpPath()
     {
-        $tmpPath = Yii::getPathOfAlias('application.runtime') . DIRECTORY_SEPARATOR . 'test_file_storage_tmp';
-        if (!file_exists($tmpPath)) {
-            @mkdir($tmpPath,0777, true);
-        }
-        return $tmpPath;
+        $path = Yii::getAlias('@yii2tech/tests/unit/filestorage/runtime') . DIRECTORY_SEPARATOR . 'test_file_storage_tmp';
+        FileHelper::createDirectory($path);
+        return $path;
     }
 
     /**
@@ -153,7 +146,7 @@ class BucketTest extends TestCase
         $this->assertTrue($bucket->destroy(), 'Unable to destroy bucket!');
 
         $bucketFullBasePath = $bucket->getFullBasePath();
-        $this->assertFalse(file_exists($bucketFullBasePath), 'Unable to destory bucket full path directory!');
+        $this->assertFalse(file_exists($bucketFullBasePath), 'Unable to destroy bucket full path directory!');
     }
 
     /**

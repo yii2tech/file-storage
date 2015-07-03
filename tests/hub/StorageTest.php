@@ -10,6 +10,8 @@ use yii2tech\tests\unit\filestorage\TestCase;
 /**
  * Test case for the extension [[Storage]].
  * @see Storage
+ *
+ * @group hub
  */
 class StorageTest extends TestCase
 {
@@ -21,7 +23,7 @@ class StorageTest extends TestCase
         $methodsList = [
             'init',
         ];
-        $fileStorage = $this->getMock(Storage::className(), $methodsList);
+        $fileStorage = $this->getMock(\yii2tech\filestorage\local\Storage::className(), $methodsList);
         return $fileStorage;
     }
 

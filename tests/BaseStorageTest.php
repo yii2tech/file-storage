@@ -50,18 +50,6 @@ class BaseStorageTest extends TestCase
 
     // Tests :
 
-    public function testSetGet()
-    {
-        $fileStorage = $this->createFileStorage();
-
-        $testBucketClassName = 'TestBucketClassName';
-        $this->assertTrue($fileStorage->setBucketClassName($testBucketClassName), 'Unable to set bucket class name!');
-        $this->assertEquals($fileStorage->getBucketClassName(), $testBucketClassName, 'Unable to set bucket class name correctly!');
-    }
-
-    /**
-     * @depends testSetGet
-     */
     public function testAddBucket()
     {
         $fileStorage = $this->createFileStorage();
@@ -105,7 +93,7 @@ class BaseStorageTest extends TestCase
 
         $testBucket = $this->createFileStorageBucket();
         $testBucketClassName = get_class($testBucket);
-        $fileStorage->setBucketClassName($testBucketClassName);
+        $fileStorage->bucketClassName = $testBucketClassName;
 
         $testBucketName = 'test_bucket_name';
         $this->assertTrue($fileStorage->addBucket($testBucketName), 'Unable to add bucket only by name!');
@@ -145,7 +133,7 @@ class BaseStorageTest extends TestCase
 
         $testBucket = $this->createFileStorageBucket();
         $testBucketClassName = get_class($testBucket);
-        $fileStorage->setBucketClassName($testBucketClassName);
+        $fileStorage->bucketClassName = $testBucketClassName;
 
         $bucketsCount = 5;
         $testBuckets = [];

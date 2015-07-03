@@ -48,7 +48,7 @@ class Storage extends BaseStorage
     /**
      * @inheritdoc
      */
-    public $bucketClassName = 'yii2tech\filestorage\filesystem\Bucket';
+    public $bucketClassName = 'yii2tech\filestorage\local\Bucket';
     /**
      * @var integer the chmod permission for directories and files,
      * created in the process. Defaults to 0755 (owner rwx, group rx and others rx).

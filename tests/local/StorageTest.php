@@ -9,6 +9,8 @@ use yii2tech\tests\unit\filestorage\TestCase;
 /**
  * Test case for the extension [[Storage]].
  * @see Storage
+ *
+ * @group local
  */
 class StorageTest extends TestCase
 {
