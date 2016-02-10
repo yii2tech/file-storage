@@ -1,5 +1,5 @@
-Yii 2 ActiveRecord Eager Join extension Change Log
-==================================================
+Yii 2 File Storage extension Change Log
+=======================================
 
 1.0.0, February 10, 2016
 ------------------------
