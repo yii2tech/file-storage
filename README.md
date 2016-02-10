@@ -82,6 +82,19 @@ return [
 ];
 ```
 
+Example usage:
+
+```php
+$bucket = Yii::$app->fileStorage->getBucket('tempFiles');
+
+$bucket->saveFileContent('foo.txt', 'Foo content'); // create file with content
+$bucket->deleteFile('foo.txt'); // deletes file from bucket
+$bucket->copyFileIn('/path/to/source/file.txt', 'file.txt'); // copy file into the bucket
+$bucket->copyFileOut('file.txt', '/path/to/destination/file.txt'); // copy file from the bucket
+var_dump($bucket->fileExists('file.txt')); // outputs `true`
+echo $bucket->getFileUrl('file.txt'); // outputs: 'http://domain.com/files/f/i/file.txt'
+```
+
 Following file storages are available with this extension:
  - [[\yii2tech\filestorage\local\Storage]] - stores files on the OS local file system.
  - [[\yii2tech\filestorage\amazon\Storage]] - stores files using Amazon simple storage service (S3).
