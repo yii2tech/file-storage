@@ -85,7 +85,7 @@ class Bucket extends BucketSubDirTemplate
      * @var array internal cache data.
      * This field is for the internal usage only.
      */
-    private $_internalCache = [];
+    protected $_internalCache = [];
 
 
     /**
