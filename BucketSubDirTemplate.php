@@ -40,11 +40,12 @@ abstract class BucketSubDirTemplate extends BaseBucket
      * '{^name}/{^^name}'
      */
     public $fileSubDirTemplate = '';
+
     /**
      * @var array internal cache data.
      * This field is for the internal usage only.
      */
-    protected $_internalCache = array();
+    protected $_internalCache = [];
 
 
      /**
@@ -53,7 +54,7 @@ abstract class BucketSubDirTemplate extends BaseBucket
      */
     public function clearInternalCache()
     {
-        $this->_internalCache = array();
+        $this->_internalCache = [];
         return true;
     }
 

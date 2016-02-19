@@ -71,6 +71,7 @@ class Bucket extends BucketSubDirTemplate
      * @see AmazonS3
      */
     public $acl = 'private';
+
     /**
      * @var string actual value of {@link region}.
      * This field is for the internal usage only.
@@ -81,11 +82,6 @@ class Bucket extends BucketSubDirTemplate
      * This field is for the internal usage only.
      */
     private $_actualAcl;
-    /**
-     * @var array internal cache data.
-     * This field is for the internal usage only.
-     */
-    private $_internalCache = [];
 
 
     /**
@@ -115,16 +111,6 @@ class Bucket extends BucketSubDirTemplate
     {
         $urlName = $this->getName();
         return preg_replace('/([^A-Z|^0-9|^-])/is', '-', $urlName);
-    }
-
-    /**
-     * Clears internal cache data.
-     * @return boolean success.
-     */
-    public function clearInternalCache()
-    {
-        $this->_internalCache = [];
-        return true;
     }
 
     /**
