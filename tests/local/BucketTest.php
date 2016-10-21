@@ -483,4 +483,35 @@ class BucketTest extends TestCase
         $bucketFileName = $bucket->getFullFileName($testFileName);
         $this->assertTrue(file_exists($bucketFileName), 'Unable to create file with name, containing dir separator, in the bucket!');
     }
+
+    /**
+     * @depends testGetFileContent
+     */
+    public function testOpenFile()
+    {
+        $bucket = $this->createFileStorageBucket();
+        $testBucketName = 'test_get_file_content_bucket';
+        $bucket->setName($testBucketName);
+
+        $testFileName = 'test_read_file_name.tmp';
+        $testFileContent = 'Test read file content';
+        $bucket->saveFileContent($testFileName, $testFileContent);
+
+        $resource = $bucket->openFile($testFileName, 'r');
+        $this->assertTrue(is_resource($resource));
+
+        $this->assertEquals($testFileContent, stream_get_contents($resource));
+        fclose($resource);
+
+        $testFileName = 'test_write_file_name.tmp';
+        $testFileContent = 'Test write file content';
+
+        $resource = $bucket->openFile($testFileName, 'w');
+        $this->assertTrue(is_resource($resource));
+
+        fwrite($resource, $testFileContent);
+        fclose($resource);
+
+        $this->assertEquals($testFileContent, $bucket->getFileContent($testFileName));
+    }
 }

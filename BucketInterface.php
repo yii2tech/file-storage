@@ -155,4 +155,16 @@ interface BucketInterface
      * @return string file web URL.
      */
     public function getFileUrl($fileName);
+
+    /**
+     * Opens a file as stream resource, e.g. like `fopen()` function.
+     * @param string $fileName - file name.
+     * @param string $mode - the type of access you require to the stream, e.g. `r`, `w`, `a` and so on.
+     * You should prefer usage of simple modes like `r` and `w`, avoiding complex ones like `w+`, as they
+     * may not supported by some storages.
+     * @param resource|null $context - stream context to be used.
+     * @return resource file pointer resource on success, or `false` on error.
+     * @since 1.1.0
+     */
+    public function openFile($fileName, $mode, $context = null);
 }

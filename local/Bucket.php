@@ -401,4 +401,17 @@ class Bucket extends BucketSubDirTemplate
         $fileUrl = $baseUrl . '/' . $fileName;
         return $fileUrl;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function openFile($fileName, $mode, $context = null)
+    {
+        $fullFileName = $this->resolveFullFileName($fileName);
+        if ($context === null) {
+            // avoid PHP warning: fopen() expects parameter 4 to be resource, null given
+            return fopen($fullFileName, $mode);
+        }
+        return fopen($fullFileName, $mode, null, $context);
+    }
 }

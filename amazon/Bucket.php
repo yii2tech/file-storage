@@ -499,6 +499,30 @@ class Bucket extends BucketSubDirTemplate
         return $amazonS3->getObjectUrl($this->getUrlName(), $fileName);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function openFile($fileName, $mode, $context = null)
+    {
+        $this->getStorage()->registerStreamWrapper();
+
+        $streamPath = 's3://' . $this->getUrlName() . '/' . $fileName;
+
+        if ($mode === 'r' && func_num_args() < 3) {
+            $context = stream_context_create([
+                's3' => [
+                    'seekable' => true
+                ]
+            ]);
+        }
+
+        if ($context === null) {
+            // avoid PHP warning: fopen() expects parameter 4 to be resource, null given
+            return fopen($streamPath, $mode);
+        }
+        return fopen($streamPath, $mode, null, $context);
+    }
+
     // Batch files upload :
 
     /**

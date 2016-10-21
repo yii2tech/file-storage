@@ -67,10 +67,15 @@ class Storage extends BaseStorage
      * If constant 'AWS_SECRET_KEY' has been defined, this field can be left blank.
      */
     public $awsSecretKey = '';
+
     /**
      * @var S3Client instance of the Amazon S3 client.
      */
     private $_amazonS3;
+    /**
+     * @var boolean whether `s3` stream wrapper has been already registered.
+     */
+    private $streamWrapperRegistered = false;
 
 
     /**
@@ -107,5 +112,18 @@ class Storage extends BaseStorage
             'secret' => $this->awsSecretKey,
         ];
         return S3Client::factory($amazonS3Options);
+    }
+
+    /**
+     * Registers Amazon S3 stream wrapper for the `s3` protocol.
+     * @param boolean $force whether to enforce registration even wrapper has been already registered.
+     * @since 1.1.0
+     */
+    public function registerStreamWrapper($force = false)
+    {
+        if ($force || !$this->streamWrapperRegistered) {
+            $this->getAmazonS3()->registerStreamWrapper();
+            $this->streamWrapperRegistered = true;
+        }
     }
 }
