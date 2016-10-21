@@ -10,12 +10,29 @@ use Yii;
  */
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var array config params.
+     */
+    public static $params;
+
+    /**
+     * @var \yii\mongodb\Connection MongoDB connection instance.
+     */
+    protected $mongodb;
+
+
+    /**
+     * @inheritdoc
+     */
     protected function setUp()
     {
         parent::setUp();
         $this->mockApplication();
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function tearDown()
     {
         $this->destroyApplication();
@@ -50,5 +67,45 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function destroyApplication()
     {
         Yii::$app = null;
+    }
+
+    /**
+     * Returns a test configuration param from /data/config.php
+     * @param string $name params name
+     * @param mixed $default default value to use when param is not set.
+     * @return mixed  the value of the configuration param
+     */
+    public static function getParam($name, $default = null)
+    {
+        if (static::$params === null) {
+            static::$params = require(__DIR__ . '/data/config.php');
+        }
+
+        return isset(static::$params[$name]) ? static::$params[$name] : $default;
+    }
+
+    /**
+     * @param boolean $reset whether to clean up the test database
+     * @param boolean $open  whether to open test database
+     * @return \yii\mongodb\Connection
+     */
+    public function getMongodb($reset = false, $open = true)
+    {
+        if (!$reset && $this->mongodb) {
+            return $this->mongodb;
+        }
+
+        $config = self::getParam('mongodb');
+
+        $db = new \yii\mongodb\Connection($config);
+
+        $db->enableLogging = false;
+        $db->enableProfiling = false;
+        if ($open) {
+            $db->open();
+        }
+        $this->mongodb = $db;
+
+        return $db;
     }
 }
