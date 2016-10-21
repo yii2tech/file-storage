@@ -30,6 +30,7 @@ class BaseBucketTest extends TestCase
             'moveFileOut',
             'moveFileInternal',
             'getFileUrl',
+            'openFile',
         ];
         $bucket = $this->getMock('yii2tech\filestorage\BaseBucket', $methodsList);
         return $bucket;
