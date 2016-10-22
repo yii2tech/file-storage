@@ -18,8 +18,6 @@ class BucketTest extends TestCase
 {
     public function tearDown()
     {
-        FileHelper::removeDirectory($this->getTestTmpPath());
-
         $fileStorage = $this->createFileStorage();
         $amazonS3 = $fileStorage->getAmazonS3();
         /* @var $response \Guzzle\Service\Resource\Model */
@@ -47,13 +45,6 @@ class BucketTest extends TestCase
         }
 
         parent::tearDown();
-    }
-
-    protected function getTestTmpPath()
-    {
-        $path = Yii::getAlias('@yii2tech/tests/unit/filestorage/runtime') . DIRECTORY_SEPARATOR . 'test_file_storage_tmp';
-        FileHelper::createDirectory($path);
-        return $path;
     }
 
     /**
