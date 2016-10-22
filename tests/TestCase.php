@@ -4,6 +4,7 @@ namespace yii2tech\tests\unit\filestorage;
 
 use yii\helpers\ArrayHelper;
 use Yii;
+use yii\helpers\FileHelper;
 
 /**
  * Base class for the test cases.
@@ -28,6 +29,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->mockApplication();
+        FileHelper::createDirectory($this->getTestTmpPath());
     }
 
     /**
@@ -35,6 +37,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        FileHelper::removeDirectory($this->getTestTmpPath());
         $this->destroyApplication();
     }
 
@@ -107,5 +110,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->mongodb = $db;
 
         return $db;
+    }
+
+    /**
+     * Returns the path for the temporary files.
+     * @return string temporary path
+     */
+    public function getTestTmpPath()
+    {
+        return Yii::getAlias('@yii2tech/tests/unit/filestorage/runtime/test_file_storage_tmp');
     }
 }

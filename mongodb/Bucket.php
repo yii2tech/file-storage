@@ -7,6 +7,7 @@
 
 namespace yii2tech\filestorage\mongodb;
 
+use yii\base\InvalidParamException;
 use yii2tech\filestorage\BaseBucket;
 
 /**
@@ -65,11 +66,51 @@ class Bucket extends BaseBucket
     }
 
     /**
+     * Finds the MongoDB document with file information.
+     * @param string $fileName file name.
+     * @return array|null MongoDB document.
+     */
+    protected function findDocument($fileName)
+    {
+        return $this->getCollection()->getFileCollection()->findOne(['filename' => $fileName]);
+    }
+
+    /**
+     * Creates MongoDB GridFS file download.
+     * @param string $fileName file name.
+     * @return \yii\mongodb\file\Download MongoDB GridFS file download.
+     */
+    protected function createFileDownload($fileName)
+    {
+        $document = $this->findDocument($fileName);
+        if (empty($document)) {
+            throw new InvalidParamException("File '{$fileName}' does not exist.");
+        }
+        return $this->getCollection()->createDownload($document);
+    }
+
+    /**
+     * Creates MongoDB GridFS file upload.
+     * @param string $fileName file name.
+     * @return \yii\mongodb\file\Upload MongoDB GridFS file upload.
+     */
+    protected function createFileUpload($fileName)
+    {
+        return $this->getCollection()->createUpload(['filename' => $fileName]);
+    }
+
+    /**
      * @inheritdoc
      */
     public function create()
     {
-        $this->getCollection();
+        $collection = $this->getCollection();
+
+        $database = $collection->database;
+
+        $database->createCollection($collection->getFileCollection()->name);
+        $database->createCollection($collection->getChunkCollection()->name);
+
         return true;
     }
 
@@ -86,131 +127,156 @@ class Bucket extends BaseBucket
      */
     public function exists()
     {
-        $collectionPrefix = $this->getCollectionPrefix();
-        if (is_array($collectionPrefix)) {
-            list($database, $prefix) = $collectionPrefix;
-        } else {
-            $database = null;
-            $prefix = $collectionPrefix;
-        }
-        return !empty($this->getStorage()->db->getDatabase($database)->listCollections(['name' => $prefix . '.files']));
+        $collection = $this->getCollection();
+        $database = $collection->database;
+
+        $collectionNames = $database->listCollections(['name' => $collection->getFileCollection()->name]);
+
+        return !empty($collectionNames);
     }
 
     /**
-     * Saves content as new file.
-     * @param string $fileName - new file name.
-     * @param string $content - new file content.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function saveFileContent($fileName, $content)
     {
-        // TODO: Implement saveFileContent() method.
+        $this->createFileUpload($fileName)->addContent($content)->complete();
+        $this->log("file '{$fileName}' has been saved");
+        return true;
     }
 
     /**
-     * Returns content of an existing file.
-     * @param string $fileName - new file name.
-     * @return string $content - file content.
+     * @inheritdoc
      */
     public function getFileContent($fileName)
     {
-        // TODO: Implement getFileContent() method.
+        $download = $this->createFileDownload($fileName);
+        $this->log("content of file '{$fileName}' has been returned");
+        return $download->toString();
     }
 
     /**
-     * Deletes an existing file.
-     * @param string $fileName - new file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function deleteFile($fileName)
     {
-        // TODO: Implement deleteFile() method.
+        $document = $this->findDocument($fileName);
+        if (empty($document)) {
+            $this->log("unable to delete file '{$fileName}': file does not exist");
+            return true;
+        }
+        $deleteCount = $this->getCollection()->remove(['_id' => $document['_id']], ['limit' => 1]);
+        $this->log("file '{$fileName}' has been deleted");
+        return $deleteCount > 0;
     }
 
     /**
-     * Checks if the file exists in the bucket.
-     * @param string $fileName - searching file name.
-     * @return boolean file exists.
+     * @inheritdoc
      */
     public function fileExists($fileName)
     {
-        // TODO: Implement fileExists() method.
+        $document = $this->findDocument($fileName);
+        return !empty($document);
     }
 
     /**
-     * Copies file from the OS file system into the bucket.
-     * @param string $srcFileName - OS full file name.
-     * @param string $fileName - new bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function copyFileIn($srcFileName, $fileName)
     {
-        // TODO: Implement copyFileIn() method.
+        $this->createFileUpload($fileName)->addFile($srcFileName)->complete();
+        $this->log("file '{$srcFileName}' has been copied to '{$fileName}'");
+        return true;
     }
 
     /**
-     * Copies file from the bucket into the OS file system.
-     * @param string $fileName - bucket existing file name.
-     * @param string $destFileName - new OS full file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function copyFileOut($fileName, $destFileName)
     {
-        // TODO: Implement copyFileOut() method.
+        $this->createFileDownload($fileName)->toFile($destFileName);
+        $this->log("file '{$fileName}' has been copied to '{$destFileName}'");
+        return true;
     }
 
     /**
-     * Copies file inside this bucket or between this bucket and another
-     * bucket of this file storage.
-     * File can be passed as string, which means the internal bucket file,
-     * or as an array of 2 elements: first one - the name of the bucket,
-     * the second one - name of the file in this bucket
-     * @param mixed $srcFile - this bucket existing file name or array reference to another bucket file name.
-     * @param mixed $destFile - this bucket existing file name or array reference to another bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function copyFileInternal($srcFile, $destFile)
     {
-        // TODO: Implement copyFileInternal() method.
+        if (is_array($srcFile)) {
+            list($bucketName, $srcFileName) = $srcFile;
+            $srcBucket = $this->getStorage()->getBucket($bucketName);
+        } else {
+            $srcBucket = $this;
+            $srcFileName = $srcFile;
+        }
+
+        if (is_array($destFile)) {
+            list($bucketName, $destFileName) = $destFile;
+            $destBucket = $this->getStorage()->getBucket($bucketName);
+        } else {
+            $destBucket = $this;
+            $destFileName = $destFile;
+        }
+
+        $srcDocument = $srcBucket->findDocument($srcFileName);
+
+        $destDocument = $srcDocument;
+        unset($destDocument['_id']);
+        $destDocument['filename'] = $destFileName;
+
+        $destCollection = $destBucket->getCollection();
+        $destDocument['_id'] = $destCollection->getFileCollection()->insert($destDocument);
+
+        $destChunkCollection = $destCollection->getChunkCollection();
+        foreach ($srcBucket->getCollection()->getChunkCollection()->find(['files_id' => $srcDocument['_id']]) as $srcChunk) {
+            $destChunk = $srcChunk;
+            unset($destChunk['_id']);
+            $destChunk['files_id'] = $destDocument['_id'];
+            $destChunkCollection->insert($destChunk);
+        }
+
+        $this->log("file '{$srcFileName}' has been copied to '{$destFileName}'");
+
+        return true;
     }
 
     /**
-     * Copies file from the OS file system into the bucket and
-     * deletes the source file.
-     * @param string $srcFileName - OS full file name.
-     * @param string $fileName - new bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function moveFileIn($srcFileName, $fileName)
     {
-        // TODO: Implement moveFileIn() method.
+        return ($this->copyFileIn($srcFileName, $fileName) && unlink($srcFileName));
     }
 
     /**
-     * Copies file from the bucket into the OS file system and
-     * deletes the source bucket file.
-     * @param string $fileName - bucket existing file name.
-     * @param string $destFileName - new OS full file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function moveFileOut($fileName, $destFileName)
     {
-        // TODO: Implement moveFileOut() method.
+        return ($this->copyFileOut($fileName, $destFileName) && $this->deleteFile($fileName));
     }
 
     /**
-     * Moves file inside this bucket or between this bucket and another
-     * bucket of this file storage.
-     * File can be passed as string, which means the internal bucket file,
-     * or as an array of 2 elements: first one - the name of the bucket,
-     * the second one - name of the file in this bucket
-     * @param mixed $srcFile - this bucket existing file name or array reference to another bucket file name.
-     * @param mixed $destFile - this bucket existing file name or array reference to another bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function moveFileInternal($srcFile, $destFile)
     {
-        // TODO: Implement moveFileInternal() method.
+        if (!$this->copyFileInternal($srcFile, $destFile)) {
+            return false;
+        }
+
+        if (is_array($srcFile)) {
+            list($bucketName, $srcFileName) = $srcFile;
+            $srcBucket = $this->getStorage()->getBucket($bucketName);
+        } else {
+            $srcBucket = $this;
+            $srcFileName = $srcFile;
+        }
+        $srcBucket->deleteFile($srcFileName);
+
+        return true;
     }
 
     /**
@@ -228,6 +294,21 @@ class Bucket extends BaseBucket
      */
     public function openFile($fileName, $mode, $context = null)
     {
-        // TODO: Implement openFile() method.
+        $storage = $this->getStorage();
+        $storage->registerStreamWrapper();
+
+        $collection = $this->getCollection();
+
+        $path = $storage->db->fileStreamProtocol . '://' . $collection->database->name . '.' . $collection->prefix . '?filename=' . $fileName;
+
+        if ($context === null) {
+            $context = stream_context_create([
+                $storage->db->fileStreamProtocol => [
+                    'db' => $storage->db
+                ]
+            ]);
+        }
+
+        return fopen($path, $mode, null, $context);
     }
 }

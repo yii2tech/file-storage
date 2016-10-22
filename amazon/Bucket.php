@@ -126,7 +126,7 @@ class Bucket extends BucketSubDirTemplate
 
     /**
      * Creates Amazon S3 file complex reference, which includes bucket name and file self name.
-     * Such reference can be passed to {@link \Aws\S3\S3Client::copyObject()}.
+     * Such reference can be passed to [[\Aws\S3\S3Client::copyObject()]].
      * File can be passed as string, which means the internal bucket file,
      * or as an array of 2 elements: first one - the name of the bucket,
      * the second one - name of the file in this bucket

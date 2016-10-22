@@ -49,4 +49,13 @@ class Storage extends BaseStorage
         parent::init();
         $this->db = Instance::ensure($this->db, Connection::className());
     }
+
+    /**
+     * Registers MongoDB GridFS stream wrapper.
+     * @param boolean $force whether to enforce registration even wrapper has been already registered.
+     */
+    public function registerStreamWrapper($force = false)
+    {
+        $this->db->registerFileStreamWrapper($force);
+    }
 }
