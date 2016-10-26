@@ -246,4 +246,25 @@ class Storage extends Component implements StorageInterface
         }
         return false;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        foreach ($this->getStorages() as $storage) {
+            $storage->setBaseUrl($baseUrl);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBaseUrl()
+    {
+        foreach ($this->getStorages() as $storage) {
+            return $storage->getBaseUrl();
+        }
+        return null;
+    }
 }
