@@ -47,14 +47,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * @param array $config The application configuration, if needed
      * @param string $appClass name of the application class to create
      */
-    protected function mockApplication($config = [], $appClass = '\yii\console\Application')
+    protected function mockApplication($config = [], $appClass = '\yii\web\Application')
     {
         new $appClass(ArrayHelper::merge([
             'id' => 'testapp',
             'basePath' => __DIR__,
             'vendorPath' => $this->getVendorPath(),
             'components' => [
-                'urlManager' => [
+                'request' => [
+                    'hostInfo' => 'http://domain.com',
                     'scriptUrl' => '/index.php'
                 ],
             ],
@@ -124,5 +125,22 @@ class TestCase extends \PHPUnit_Framework_TestCase
     public function getTestTmpPath()
     {
         return Yii::getAlias('@yii2tech/tests/unit/filestorage/runtime/test_file_storage_tmp');
+    }
+
+    /**
+     * Invokes object method, even if it is private or protected.
+     * @param object $object object.
+     * @param string $method method name.
+     * @param array $args method arguments
+     * @return mixed method result
+     */
+    protected function invoke($object, $method, array $args = [])
+    {
+        $classReflection = new \ReflectionClass(get_class($object));
+        $methodReflection = $classReflection->getMethod($method);
+        $methodReflection->setAccessible(true);
+        $result = $methodReflection->invokeArgs($object, $args);
+        $methodReflection->setAccessible(false);
+        return $result;
     }
 }
