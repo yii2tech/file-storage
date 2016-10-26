@@ -38,7 +38,7 @@ use yii2tech\filestorage\BucketSubDirTemplate;
  *
  * @see Storage
  *
- * @property string $baseSubPath public alias of {@link _baseSubPath}.
+ * @property string $baseSubPath sub path in the directory specified by [[Storage::basePath]].
  * @method Storage getStorage()
  *
  * @author Paul Klimov <klimov.paul@gmail.com>

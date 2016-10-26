@@ -20,7 +20,36 @@ use yii2tech\filestorage\BaseStorage;
  * composer require --prefer-dist yiisoft/yii2-mongodb:~2.1.0
  * ```
  *
+ * You need to configure MongoDB connection as application component and refer it to [[db]].
+ *
+ * Configuration example:
+ *
+ * ```php
+ * 'mongodb' => [
+ *     'class' => '\yii\mongodb\Connection',
+ *     'dsn' => 'mongodb://developer:password@localhost:27017/mydatabase',
+ * ],
+ * 'fileStorage' => [
+ *     'class' => 'yii2tech\filestorage\mongodb\Storage',
+ *     'db' => 'mongodb',
+ *     'baseUrl' => ['/file/download'], // should lead to `\yii2tech\filestorage\DownloadAction`
+ *     'buckets' => [
+ *         'tempFiles' => [
+ *             'collectionPrefix' => 'temp',
+ *         ],
+ *         'imageFiles' => [
+ *             'collectionPrefix' => 'image',
+ *         ],
+ *     ]
+ * ]
+ * ```
+ *
+ * Note: MongoDB GridFS does not provide any build in URL access for the files. Thus you'll to setup
+ * [[\yii2tech\filestorage\DownloadAction]] at some of your controllers and set [[baseUrl]] as a route to it,
+ * in case you need web access for the stored files.
+ *
  * @see http://docs.mongodb.org/manual/core/gridfs/
+ * @see \yii2tech\filestorage\DownloadAction
  *
  * @method Bucket getBucket($bucketName)
  *

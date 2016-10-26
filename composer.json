@@ -1,7 +1,7 @@
 {
     "name": "yii2tech/file-storage",
     "description": "File storage abstraction layer for Yii2",
-    "keywords": ["yii2", "file", "storage", "abstraction", "amazon", "S3"],
+    "keywords": ["yii2", "file", "storage", "abstraction", "amazon", "S3", "mongodb", "gridfs"],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
     "support": {

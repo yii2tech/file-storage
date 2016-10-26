@@ -11,7 +11,26 @@ use yii\base\InvalidParamException;
 use yii2tech\filestorage\BaseBucket;
 
 /**
- * Bucket
+ * Bucket introduces the file storage bucket based simply on the [MongoDB](http://www.mongodb.org/) [GridFS](http://docs.mongodb.org/manual/core/gridfs/).
+ *
+ * Configuration example:
+ *
+ * ```php
+ * 'fileStorage' => [
+ *     'class' => 'yii2tech\filestorage\mongodb\Storage',
+ *     'baseUrl' => ['/file/download'], // should lead to `\yii2tech\filestorage\DownloadAction`
+ *     'buckets' => [
+ *         'tempFiles' => [
+ *             'collectionPrefix' => 'temp',
+ *         ],
+ *         'imageFiles' => [
+ *             'collectionPrefix' => 'image',
+ *         ],
+ *     ]
+ * ]
+ * ```
+ *
+ * @see Storage
  *
  * @property string|array $collectionPrefix related MongoDB GridFS collection prefix.
  * @property \yii\mongodb\file\Collection $collection related MongoDB GridFS collection.

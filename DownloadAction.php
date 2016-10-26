@@ -15,7 +15,27 @@ use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
- * DownloadAction
+ * DownloadAction provides the web access for the files stored in the file storage.
+ *
+ * This action can be used in case particular storage does not provide native support for files web access,
+ * like [[\yii2tech\filestorage\mongodb\Storage]], or in case you want to restrict web access for the stored files,
+ * for example: allow access only for the logged in user.
+ *
+ * Configuration example:
+ *
+ * ```php
+ * class FileController extends \yii\web\Controller
+ * {
+ *     public function actions()
+ *     {
+ *         return [
+ *             'download' => [
+ *                 'class' => 'yii2tech\filestorage\DownloadAction',
+ *             ],
+ *         ];
+ *     }
+ * }
+ * ```
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.1.0
@@ -37,6 +57,12 @@ class DownloadAction extends Action
      * @see onlyBuckets
      */
     public $exceptBuckets = [];
+    /**
+     * @var boolean whether to check the requested file existence before attempt to get its content.
+     * You may disable this option in order to achieve better performance, however in this case
+     * action flow may produce PHP error with some storages.
+     */
+    public $checkFileExistence = true;
 
 
     /**
@@ -60,7 +86,7 @@ class DownloadAction extends Action
 
         $bucket = $this->fileStorage->getBucket($bucket);
 
-        if (!$bucket->fileExists($filename)) {
+        if ($this->checkFileExistence && !$bucket->fileExists($filename)) {
             throw new NotFoundHttpException("File '{$filename}' does not exist at bucket '{$bucket->getName()}' does not exist.");
         }
 

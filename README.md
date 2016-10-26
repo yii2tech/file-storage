@@ -44,6 +44,21 @@ or add
 
 to the require section of your composer.json.
 
+If you wish to use MongoDB storage, you should also install [yiisoft/yii2-mongodb](https://github.com/yiisoft/yii2-mongodb) version 2.1.
+Either run
+
+```
+php composer.phar require --prefer-dist yiisoft/yii2-mongodb:~2.1.0
+```
+
+or add
+
+```json
+"yiisoft/yii2-mongodb": "2.1.0"
+```
+
+to the require section of your composer.json.
+
 
 Usage
 -----
@@ -98,6 +113,20 @@ echo $bucket->getFileUrl('file.txt'); // outputs: 'http://domain.com/files/f/i/f
 Following file storages are available with this extension:
  - [[\yii2tech\filestorage\local\Storage]] - stores files on the OS local file system.
  - [[\yii2tech\filestorage\amazon\Storage]] - stores files using Amazon simple storage service (S3).
+ - [[\yii2tech\filestorage\mongodb\Storage]] - stores files using MongoDB GridFS.
  - [[\yii2tech\filestorage\hub\Storage]] - allows combination of different file storages.
 
-Please refer to the particualr storage class for more details.
+Please refer to the particular storage class for more details.
+
+**Heads up!** Some of the storages may require additional libraries or PHP extensions, which are not
+required with this package by default, to be installed. Please check particulae storage class documentation
+for the details.
+
+
+## Accessing files by URL <span id="accessing-files-by-url"></span>
+
+
+## Processing of the large files <span id="processing-of-the-large-files"></span>
+
+
+## Logging <span id="logging"></span>
