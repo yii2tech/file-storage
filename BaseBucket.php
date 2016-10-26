@@ -9,6 +9,7 @@ namespace yii2tech\filestorage;
 
 use Yii;
 use yii\base\Object;
+use yii\helpers\Url;
 use yii\log\Logger;
 
 /** 
@@ -29,7 +30,7 @@ abstract class BaseBucket extends Object implements BucketInterface
     /**
      * @var StorageInterface file storage, which owns the bucket.
      */
-    private $_storage = null;
+    private $_storage;
 
 
     /**
@@ -85,5 +86,34 @@ abstract class BaseBucket extends Object implements BucketInterface
     public function getStorage()
     {
         return $this->_storage;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFileUrl($fileName)
+    {
+        $baseUrl = $this->getStorage()->getBaseUrl();
+        if (is_array($baseUrl)) {
+            $url = $baseUrl;
+            $url['bucket'] = $this->getName();
+            $url['filename'] = $fileName;
+            return Url::to($url);
+        }
+
+        return $this->composeFileUrl($baseUrl, $fileName);
+    }
+
+    /**
+     * Composes file URL from the base URL and filename.
+     * This method is invoked at [[getFileUrl()]] in case base URL does not specify a URL route.
+     * @param string|null $baseUrl storage base URL.
+     * @param string $fileName self file name.
+     * @return string file web URL.
+     * @since 1.1.0
+     */
+    protected function composeFileUrl($baseUrl, $fileName)
+    {
+        return $baseUrl . '/' . urlencode($this->getName()) . '/' . $fileName;
     }
 }

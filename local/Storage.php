@@ -37,7 +37,6 @@ use yii2tech\filestorage\BaseStorage;
  * @see Bucket
  *
  * @property string $basePath file system path, which is basic for all buckets.
- * @property string $baseUrl web URL, which is basic for all buckets.
  * @method Bucket getBucket($bucketName)
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
@@ -58,10 +57,6 @@ class Storage extends BaseStorage
      * @var string file system path, which is basic for all buckets.
      */
     private $_basePath = '';
-    /**
-     * @var string web URL, which is basic for all buckets.
-     */
-    private $_baseUrl = '';
 
 
     /**
@@ -78,21 +73,5 @@ class Storage extends BaseStorage
     public function getBasePath()
     {
         return $this->_basePath;
-    }
-
-    /**
-     * @param string $baseUrl web URL, which is basic for all buckets.
-     */
-    public function setBaseUrl($baseUrl)
-    {
-        $this->_baseUrl = Yii::getAlias($baseUrl);
-    }
-
-    /**
-     * @return string web URL, which is basic for all buckets.
-     */
-    public function getBaseUrl()
-    {
-        return $this->_baseUrl;
     }
 }

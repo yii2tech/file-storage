@@ -52,4 +52,30 @@ interface StorageInterface
      * @return boolean success.
      */
     public function hasBucket($bucketName);
+
+    /**
+     * Sets the base URL, which should be used by [[BucketInterface::getFileUrl()]].
+     * Example values:
+     *
+     * ```php
+     * 'http://files.domain.com',
+     * '//files.domain.com',
+     * '@web/files',
+     * ['/file/download'],
+     * ```
+     *
+     * @param string|array|null $baseUrl web URL, which is basic for all buckets.
+     * If string given, the URL will be composed by pattern: `{baseUrl}/{bucketName}/{fileName}`.
+     * If array given, it is considered as a route for URL creation via [[\yii\web\UrlManager]],
+     * bucket name will be added as `bucket` param, and file name will be added as `filename`.
+     * @since 1.1.0
+     */
+    public function setBaseUrl($baseUrl);
+
+    /**
+     * Returns the base URL, which should be used by [[BucketInterface::getFileUrl()]].
+     * @return string|array|null web URL, which is basic for all buckets.
+     * @since 1.1.0
+     */
+    public function getBaseUrl();
 }

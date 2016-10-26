@@ -280,16 +280,6 @@ class Bucket extends BaseBucket
     }
 
     /**
-     * Gets web URL of the file.
-     * @param string $fileName - self file name.
-     * @return string file web URL.
-     */
-    public function getFileUrl($fileName)
-    {
-        // TODO: Implement getFileUrl() method.
-    }
-
-    /**
      * @inheritdoc
      */
     public function openFile($fileName, $mode, $context = null)

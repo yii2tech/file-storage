@@ -489,14 +489,17 @@ class Bucket extends BucketSubDirTemplate
     /**
      * @inheritdoc
      */
-    public function getFileUrl($fileName)
+    protected function composeFileUrl($baseUrl, $fileName)
     {
-        if (!$this->exists()) {
-            $this->create();
+        if ($baseUrl === null) {
+            if (!$this->exists()) {
+                $this->create();
+            }
+            $fileName = $this->getFullFileName($fileName);
+            $amazonS3 = $this->getStorage()->getAmazonS3();
+            return $amazonS3->getObjectUrl($this->getUrlName(), $fileName);
         }
-        $fileName = $this->getFullFileName($fileName);
-        $amazonS3 = $this->getStorage()->getAmazonS3();
-        return $amazonS3->getObjectUrl($this->getUrlName(), $fileName);
+        return parent::composeFileUrl($baseUrl, $fileName);
     }
 
     /**

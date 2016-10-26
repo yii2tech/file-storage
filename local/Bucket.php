@@ -386,13 +386,10 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Gets web URL of the file.
-     * @param string $fileName - self file name.
-     * @return string file web URL.
+     * @inheritdoc
      */
-    public function getFileUrl($fileName)
+    protected function composeFileUrl($baseUrl, $fileName)
     {
-        $baseUrl = $this->getStorage()->getBaseUrl();
         $baseUrl .= '/' . $this->getBaseSubPath();
         $fileSubDir = $this->getFileSubDir($fileName);
         if (!empty($fileSubDir)) {

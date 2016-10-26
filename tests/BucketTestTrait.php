@@ -359,9 +359,7 @@ trait BucketTestTrait
      */
     public function testGetFileUrl()
     {
-        $bucket = $this->createFileStorageBucket();
-        $testBucketName = 'test_get_file_url_bucket';
-        $bucket->setName($testBucketName);
+        $bucket = $this->createFileStorageBucket(['name' => 'test_get_file_url_bucket']);
 
         $testFileName = 'test_file_name.tmp';
         $testFileContent = 'Test file content';
@@ -369,6 +367,25 @@ trait BucketTestTrait
 
         $returnedFileUrl = $bucket->getFileUrl($testFileName);
         $this->assertTrue(!empty($returnedFileUrl), 'File URL is empty!');
+    }
+
+    /**
+     * @depends testGetFileUrl
+     */
+    public function testCreateFileUrl()
+    {
+        $bucket = $this->createFileStorageBucket(['name' => 'test_create_file_url_bucket']);
+        $bucket->getStorage()->setBaseUrl(['/site/download']);
+
+        $testFileName = 'test_file_name.tmp';
+        $testFileContent = 'Test file content';
+        $bucket->saveFileContent($testFileName, $testFileContent);
+
+        $returnedFileUrl = $bucket->getFileUrl($testFileName);
+        $this->assertTrue(!empty($returnedFileUrl), 'File URL is empty!');
+        $this->assertContains(urlencode('site/download'), $returnedFileUrl, 'File URL does not contain route!');
+        $this->assertContains($bucket->getName(), $returnedFileUrl, 'File URL does not contain bucket name!');
+        $this->assertContains($testFileName, $returnedFileUrl, 'File URL does not contain filename!');
     }
 
     /**

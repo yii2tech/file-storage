@@ -7,8 +7,6 @@
 
 namespace yii2tech\filestorage;
 
-use CException;
-use CFileHelper;
 use yii\base\Exception;
 
 /**
@@ -37,7 +35,10 @@ abstract class BucketSubDirTemplate extends BaseBucket
      * For example:
      * if file name equal to 54321.tmp, placeholder {^name} will be resolved as "5", {^^name} - as "4" and so on.
      * Example value:
+     *
+     * ```
      * '{^name}/{^^name}'
+     * ```
      */
     public $fileSubDirTemplate = '';
 
@@ -136,5 +137,20 @@ abstract class BucketSubDirTemplate extends BaseBucket
             $fullFileName = $fileName;
         }
         return $fullFileName;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function composeFileUrl($baseUrl, $fileName)
+    {
+        $baseUrl = $baseUrl . '/' . urlencode($this->getName());
+
+        $fileSubDir = $this->getFileSubDir($fileName);
+        if (!empty($fileSubDir)) {
+            $baseUrl .= '/' . $fileSubDir;
+        }
+
+        return $baseUrl . '/' . $fileName;
     }
 }

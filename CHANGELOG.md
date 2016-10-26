@@ -5,6 +5,7 @@ Yii 2 File Storage extension Change Log
 -----------------------
 
 - Enh #4: Added `yii2tech\filestorage\BucketInterface::openFile()` allowing to open file as a PHP resource (klimov-paul)
+- Enh #7: Usage of URL routes for `BucketInterface::getFileUrl()` provided (klimov-paul)
 
 
 1.0.1, April 25, 2016

@@ -21,6 +21,7 @@ use yii\log\Logger;
  *
  * @property BucketInterface[] $buckets list of buckets.
  * @property string $bucketClassName name of the bucket class.
+ * @property string|array $baseUrl web URL, which is basic for all buckets at [[BucketInterface::getFileUrl()]].
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
@@ -28,13 +29,20 @@ use yii\log\Logger;
 abstract class BaseStorage extends Component implements StorageInterface
 {
     /**
+     * @var string name of the bucket class.
+     */
+    public $bucketClassName = 'yii2tech\filestorage\BaseBucket';
+
+    /**
      * @var BucketInterface[] list of buckets.
      */
     private $_buckets = [];
     /**
-     * @var string name of the bucket class.
+     * @var string|array web URL, which is basic for all buckets.
+     * You can setup this field as array, which will be treated as a route specification for [[\yii\helpers\Url::to()]].
+     * @since 1.1.0
      */
-    public $bucketClassName = 'yii2tech\filestorage\BaseBucket';
+    private $_baseUrl;
 
 
     /**
@@ -152,5 +160,24 @@ abstract class BaseStorage extends Component implements StorageInterface
     public function hasBucket($bucketName)
     {
         return array_key_exists($bucketName, $this->_buckets);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        if (is_string($baseUrl)) {
+            $baseUrl = Yii::getAlias($baseUrl);
+        }
+        $this->_baseUrl = $baseUrl;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBaseUrl()
+    {
+        return $this->_baseUrl;
     }
 }
