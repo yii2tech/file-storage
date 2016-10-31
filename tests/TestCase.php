@@ -20,6 +20,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
      * @var \yii\mongodb\Connection MongoDB connection instance.
      */
     protected $mongodb;
+    /**
+     * @var \yii2tech\filestorage\sftp\Connection SSH connection instance.
+     */
+    protected $ssh;
 
 
     /**
@@ -116,6 +120,25 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->mongodb = $db;
 
         return $db;
+    }
+
+    /**
+     * @param boolean $reset whether to clean up the test connection
+     * @return \yii2tech\filestorage\sftp\Connection SFTP connection instance.
+     */
+    public function getSsh($reset = false)
+    {
+        if (!$reset && $this->ssh) {
+            return $this->ssh;
+        }
+
+        $config = self::getParam('ssh');
+
+        $sftp = new \yii2tech\filestorage\sftp\Connection($config);
+
+        $this->ssh = $sftp;
+
+        return $sftp;
     }
 
     /**

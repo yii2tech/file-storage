@@ -10,7 +10,14 @@ $config = [
         'dsn' => 'mongodb://travis:test@localhost:27017/yii2test',
         'options' => [],
         'driverOptions' => [],
-    ]
+    ],
+    'ssh' => [
+        'host' => '127.0.0.1',
+        'port' => 22,
+        'options' => [],
+        'username' => 'travis',
+        'password' => '',
+    ],
 ];
 
 if (is_file(__DIR__ . '/config.local.php')) {

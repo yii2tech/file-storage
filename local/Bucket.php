@@ -225,7 +225,7 @@ class Bucket extends BucketSubDirTemplate
     {
         $fullFileName = $this->resolveFullFileName($fileName);
         $writtenBytesCount = file_put_contents($fullFileName, $content);
-        $result = ($writtenBytesCount>0);
+        $result = ($writtenBytesCount > 0);
         if ($result) {
             $this->log("file '{$fullFileName}' has been saved");
             chmod($fullFileName, $this->getStorage()->filePermission);

@@ -22,7 +22,7 @@ install:
   - travis_retry composer install --prefer-dist --no-interaction
 
 script:
-  - phpunit --verbose $PHPUNIT_FLAGS --exclude-group amazon,mongodb
+  - phpunit --verbose $PHPUNIT_FLAGS --exclude-group amazon,mongodb,sftp
 
 after_script:
   - |
