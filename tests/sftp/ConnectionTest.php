@@ -11,12 +11,12 @@ class ConnectionTest extends TestCase
 {
     public function testOpen()
     {
-        $sftp = $this->getSsh();
+        $ssh = $this->getSsh();
 
-        $sftp->open();
+        $ssh->open();
 
-        $this->assertNotEmpty($sftp->getSession());
-        $this->assertTrue($sftp->getIsActive());
+        $this->assertNotEmpty($ssh->getSession());
+        $this->assertTrue($ssh->getIsActive());
     }
 
     /**
@@ -24,11 +24,23 @@ class ConnectionTest extends TestCase
      */
     public function testClose()
     {
-        $sftp = $this->getSsh();
+        $ssh = $this->getSsh();
 
-        $sftp->open();
-        $sftp->close();
+        $ssh->open();
+        $ssh->close();
 
-        $this->assertFalse($sftp->getIsActive());
+        $this->assertFalse($ssh->getIsActive());
+    }
+
+    /**
+     * @depends testOpen
+     */
+    public function testExecute()
+    {
+        $ssh = $this->getSsh();
+
+        $output = $ssh->execute('whoami');
+
+        $this->assertEquals($ssh->username, trim($output, "\n\r"));
     }
 }

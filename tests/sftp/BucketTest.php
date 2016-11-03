@@ -31,7 +31,7 @@ class BucketTest extends TestCase
     protected function tearDown()
     {
         $storage = $this->createFileStorage();
-        ssh2_sftp_rmdir($storage->getSftp(), $storage->basePath);
+        $storage->ssh->execute('rm -rf ' . escapeshellarg($storage->basePath));
 
         parent::tearDown();
     }
@@ -44,7 +44,7 @@ class BucketTest extends TestCase
         return [
             'ssh' => $this->getSsh(),
             'baseUrl' => 'http://test/base/url',
-            //'filePermission' => 0777
+            'filePermission' => 0777
         ];
     }
 
@@ -57,5 +57,23 @@ class BucketTest extends TestCase
         $testBaseSubPath = 'test/base/sub/path';
         $bucket->setBaseSubPath($testBaseSubPath);
         $this->assertEquals($bucket->getBaseSubPath(), $testBaseSubPath, 'Unable to set base sub path correctly!');
+    }
+
+    public function testFileExists()
+    {
+        $bucket = $this->createFileStorageBucket();
+        $testBucketName = 'test_exists_file_bucket';
+        $bucket->setName($testBucketName);
+
+        $testFileName = 'test_file_name.tmp';
+
+        $this->assertFalse($bucket->fileExists($testFileName), 'Not saved yet file exists!');
+
+        $testFileContent = 'Test file content';
+        $bucket->saveFileContent($testFileName, $testFileContent);
+        $this->assertTrue($bucket->fileExists($testFileName), 'Saved file does not exist!');
+
+        $bucket->deleteFile($testFileName);
+        $this->assertFalse($bucket->fileExists($testFileName), 'Deleted file exists!');
     }
 }

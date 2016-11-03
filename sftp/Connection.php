@@ -171,4 +171,34 @@ class Connection extends Component
             throw new Exception("Authentication by password failed for user '{$this->username}'");
         }
     }
+
+    /**
+     * Executes SSH command at remote server.
+     * @param string $command SSH command text.
+     * @return string command output
+     * @throws Exception on failure.
+     */
+    public function execute($command)
+    {
+        $stream = ssh2_exec($this->getSession(), $command);
+        if ($stream === null) {
+            throw new Exception("SSH command '{$command}' failed.");
+        }
+        $errorStream = ssh2_fetch_stream($stream, SSH2_STREAM_STDERR);
+
+        stream_set_blocking($stream, true);
+        stream_set_blocking($errorStream, true);
+
+        $output = stream_get_contents($stream);
+        $error = stream_get_contents($errorStream);
+
+        fclose($errorStream);
+        fclose($stream);
+
+        if (!empty($error)) {
+            throw new Exception("SSH command '{$command}' error: " . $error);
+        }
+
+        return $output;
+    }
 }

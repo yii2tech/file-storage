@@ -295,7 +295,7 @@ trait BucketTestTrait
             $testDestBucketName,
             $testDestFileName
         ];
-        $this->assertTrue($srcBucket->copyFileInternal($srcFileRef,$destFileRef), 'Unable to copy file internal between different buckets!');
+        $this->assertTrue($srcBucket->copyFileInternal($srcFileRef, $destFileRef), 'Unable to copy file internal between different buckets!');
         $this->assertTrue($destBucket->fileExists($testDestFileName), 'Unable to create destination file!');
     }
 

@@ -141,7 +141,26 @@ class Bucket extends BucketSubDirTemplate
             return;
         }
 
-        ssh2_sftp_rmdir($this->getStorage()->getSftp(), $path);
+        $this->getStorage()->ssh->execute('rm -rf ' . escapeshellarg($path));
+    }
+
+    /**
+     * Gets full file name of the file inside the bucket or inside the other bucket in
+     * the same storage.
+     * File can be passed as string, which means the internal bucket file,
+     * or as an array of 2 elements: first one - the name of the bucket,
+     * the second one - name of the file in this bucket
+     * @param array|string $fileReference - this bucket existing file name or array reference to another bucket file name.
+     * @return string full file name.
+     */
+    protected function composeFullFileNameByReference($fileReference)
+    {
+        if (is_array($fileReference)) {
+            list($bucketName, $fileName) = $fileReference;
+            $srcBucket = $this->getStorage()->getBucket($bucketName);
+            return $srcBucket->composeFullFileName($fileName);
+        }
+        return $this->composeFullFileName($fileReference);
     }
 
     // Bucket Interface :
@@ -204,6 +223,7 @@ class Bucket extends BucketSubDirTemplate
     public function deleteFile($fileName)
     {
         $fullFileName = $this->composeFullFileName($fileName);
+
         $result = ssh2_sftp_unlink($this->getStorage()->getSftp(), $fullFileName);
         if ($result) {
             $this->log("file '{$fullFileName}' has been deleted");
@@ -218,7 +238,14 @@ class Bucket extends BucketSubDirTemplate
      */
     public function fileExists($fileName)
     {
-        return file_exists($this->prepareSftpFileName($fileName, false));
+        $fullFileName = $this->composeFullFileName($fileName);
+
+        // usage of `file_exists()` may be unreliable - use shell command instead :
+        $command = "([ -f " . escapeshellarg($fullFileName) . " ] || [ -d " . escapeshellarg($fullFileName) . " ]) && echo '1' || echo '0'";
+        $output = $this->getStorage()->ssh->execute($command);
+        $output = trim($output, " \n\r\t");
+
+        return $output === '1';
     }
 
     /**
@@ -257,9 +284,14 @@ class Bucket extends BucketSubDirTemplate
      */
     public function copyFileInternal($srcFile, $destFile)
     {
-        $srcSftpFileName = $this->prepareSftpFileName($srcFile);
-        $destSftpFileName = $this->prepareSftpFileName($destFile);
+        $srcFullFileName = $this->composeFullFileNameByReference($srcFile);
+        $srcSftpFileName = $this->composeSftpPath($srcFullFileName);
+        $destFullFileName = $this->composeFullFileNameByReference($destFile);
+        $destSftpFileName = $this->composeSftpPath($destFullFileName);
+
+        $this->createDirectory(dirname($destFullFileName));
         $result = copy($srcSftpFileName, $destSftpFileName);
+
         if ($result) {
             $this->log("file '{$srcSftpFileName}' has been copied to '{$destSftpFileName}'");
             ssh2_sftp_chmod($this->getStorage()->getSftp(), $destSftpFileName, $this->getStorage()->filePermission);
@@ -290,9 +322,12 @@ class Bucket extends BucketSubDirTemplate
      */
     public function moveFileInternal($srcFile, $destFile)
     {
-        $srcFullFileName = $this->composeFullFileName($srcFile);
-        $destFullFileName = $this->composeFullFileName($destFile);
+        $srcFullFileName = $this->composeFullFileNameByReference($srcFile);
+        $destFullFileName = $this->composeFullFileNameByReference($destFile);
+
+        $this->createDirectory(dirname($destFullFileName));
         $result = ssh2_sftp_rename($this->getStorage()->getSftp(), $srcFullFileName, $destFullFileName);
+
         if ($result) {
             $this->log("file '{$srcFullFileName}' has been moved to '{$destFullFileName}'");
         } else {
