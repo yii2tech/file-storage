@@ -13,6 +13,8 @@ use yii2tech\filestorage\BaseStorage;
 /**
  * Storage introduces the file storage based on the SSH2 SFTP
  *
+ * This storage requires [PHP ssh2 extension](http://php.net/manual/en/book.ssh2.php) to be installed.
+ *
  * @see Connection
  *
  * @property resource $sftp related SFTP subsystem session.

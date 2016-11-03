@@ -112,6 +112,7 @@ echo $bucket->getFileUrl('file.txt'); // outputs: 'http://domain.com/files/f/i/f
 
 Following file storages are available with this extension:
  - [[\yii2tech\filestorage\local\Storage]] - stores files on the OS local file system.
+ - [[\yii2tech\filestorage\sftp\Storage]] - stores files using SSH2 SFTP.
  - [[\yii2tech\filestorage\amazon\Storage]] - stores files using Amazon simple storage service (S3).
  - [[\yii2tech\filestorage\mongodb\Storage]] - stores files using MongoDB GridFS.
  - [[\yii2tech\filestorage\hub\Storage]] - allows combination of different file storages.
