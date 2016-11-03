@@ -135,7 +135,7 @@ class Connection extends Component
         if ($this->_session === null) {
             return;
         }
-        // @todo run exit
+        $this->execute('exit;');
         $this->_session = null;
     }
 
