@@ -21,7 +21,7 @@ interface BucketInterface
     /**
      * Sets bucket name.
      * @param string $name - bucket name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function setName($name);
 
@@ -34,7 +34,7 @@ interface BucketInterface
     /**
      * Sets bucket file storage.
      * @param StorageInterface $storage - file storage.
-     * @return boolean success.
+     * @return bool success.
      */
     public function setStorage(StorageInterface $storage);
 
@@ -46,19 +46,19 @@ interface BucketInterface
 
     /**
      * Creates this bucket.
-     * @return boolean success.
+     * @return bool success.
      */
     public function create();
 
     /**
      * Destroys this bucket.
-     * @return boolean success.
+     * @return bool success.
      */
     public function destroy();
 
     /**
      * Checks is bucket exists.
-     * @return boolean success.
+     * @return bool success.
      */
     public function exists();
 
@@ -66,7 +66,7 @@ interface BucketInterface
      * Saves content as new file.
      * @param string $fileName - new file name.
      * @param string $content - new file content.
-     * @return boolean success.
+     * @return bool success.
      */
     public function saveFileContent($fileName, $content);
 
@@ -80,14 +80,14 @@ interface BucketInterface
     /**
      * Deletes an existing file.
      * @param string $fileName - new file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function deleteFile($fileName);
 
     /**
      * Checks if the file exists in the bucket.
      * @param string $fileName - searching file name.
-     * @return boolean file exists.
+     * @return bool file exists.
      */
     public function fileExists($fileName);
 
@@ -95,7 +95,7 @@ interface BucketInterface
      * Copies file from the OS file system into the bucket.
      * @param string $srcFileName - OS full file name.
      * @param string $fileName - new bucket file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function copyFileIn($srcFileName, $fileName);
 
@@ -103,7 +103,7 @@ interface BucketInterface
      * Copies file from the bucket into the OS file system.
      * @param string $fileName - bucket existing file name.
      * @param string $destFileName - new OS full file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function copyFileOut($fileName, $destFileName);
 
@@ -115,7 +115,7 @@ interface BucketInterface
      * the second one - name of the file in this bucket
      * @param mixed $srcFile - this bucket existing file name or array reference to another bucket file name.
      * @param mixed $destFile - this bucket existing file name or array reference to another bucket file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function copyFileInternal($srcFile, $destFile);
 
@@ -124,7 +124,7 @@ interface BucketInterface
      * deletes the source file.
      * @param string $srcFileName - OS full file name.
      * @param string $fileName - new bucket file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function moveFileIn($srcFileName, $fileName);
 
@@ -133,7 +133,7 @@ interface BucketInterface
      * deletes the source bucket file.
      * @param string $fileName - bucket existing file name.
      * @param string $destFileName - new OS full file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function moveFileOut($fileName, $destFileName);
 
@@ -145,7 +145,7 @@ interface BucketInterface
      * the second one - name of the file in this bucket
      * @param mixed $srcFile - this bucket existing file name or array reference to another bucket file name.
      * @param mixed $destFile - this bucket existing file name or array reference to another bucket file name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function moveFileInternal($srcFile, $destFile);
 

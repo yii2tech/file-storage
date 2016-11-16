@@ -531,7 +531,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * Saves given files content in parallel.
      * @param array $fileContents files content in format: fileName => fileContent
-     * @return boolean success.
+     * @return bool success.
      */
     public function saveFileContentBatch(array $fileContents)
     {
@@ -564,7 +564,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * Copies given files into the bucket in parallel.
      * @param array $filesMap files map in format: srcFileName => bucketFileName
-     * @return boolean success.
+     * @return bool success.
      */
     public function copyFileInBatch(array $filesMap)
     {

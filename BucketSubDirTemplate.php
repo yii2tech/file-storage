@@ -51,7 +51,7 @@ abstract class BucketSubDirTemplate extends BaseBucket
 
      /**
      * Clears internal cache data.
-     * @return boolean success.
+     * @return bool success.
      */
     public function clearInternalCache()
     {

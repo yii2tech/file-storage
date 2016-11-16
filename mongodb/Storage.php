@@ -81,7 +81,7 @@ class Storage extends BaseStorage
 
     /**
      * Registers MongoDB GridFS stream wrapper.
-     * @param boolean $force whether to enforce registration even wrapper has been already registered.
+     * @param bool $force whether to enforce registration even wrapper has been already registered.
      */
     public function registerStreamWrapper($force = false)
     {

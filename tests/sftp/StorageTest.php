@@ -25,6 +25,11 @@ class StorageTest extends TestCase
             'ssh' => $ssh
         ]);
         $this->assertSame($ssh, $storage->ssh);
+
+        $storage = new Storage([
+            'ssh' => ['host' => '127.0.0.1']
+        ]);
+        $this->assertTrue($storage->ssh instanceof Connection);
     }
 
     /**

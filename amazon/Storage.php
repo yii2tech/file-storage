@@ -73,7 +73,7 @@ class Storage extends BaseStorage
      */
     private $_amazonS3;
     /**
-     * @var boolean whether `s3` stream wrapper has been already registered.
+     * @var bool whether `s3` stream wrapper has been already registered.
      */
     private $streamWrapperRegistered = false;
 
@@ -116,7 +116,7 @@ class Storage extends BaseStorage
 
     /**
      * Registers Amazon S3 stream wrapper for the `s3` protocol.
-     * @param boolean $force whether to enforce registration even wrapper has been already registered.
+     * @param bool $force whether to enforce registration even wrapper has been already registered.
      * @since 1.1.0
      */
     public function registerStreamWrapper($force = false)

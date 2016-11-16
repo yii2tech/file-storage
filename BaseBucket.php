@@ -37,7 +37,7 @@ abstract class BaseBucket extends Object implements BucketInterface
      * Logs a message.
      * @see Logger
      * @param string $message message to be logged.
-     * @param integer $level the level of the message.
+     * @param int $level the level of the message.
      */
     protected function log($message, $level = Logger::LEVEL_INFO)
     {
@@ -51,7 +51,7 @@ abstract class BaseBucket extends Object implements BucketInterface
     /**
      * Sets bucket name.
      * @param string $name - bucket name.
-     * @return boolean success.
+     * @return bool success.
      */
     public function setName($name)
     {
@@ -71,7 +71,7 @@ abstract class BaseBucket extends Object implements BucketInterface
     /**
      * Sets bucket file storage.
      * @param StorageInterface $storage - file storage.
-     * @return boolean success.
+     * @return bool success.
      */
     public function setStorage(StorageInterface $storage)
     {

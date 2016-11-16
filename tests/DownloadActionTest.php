@@ -118,7 +118,7 @@ class DownloadActionTest extends TestCase
      *
      * @param array $actionConfig
      * @param string $bucketName
-     * @param boolean $expectedResult
+     * @param bool $expectedResult
      */
     public function testIsBucketAllowed($actionConfig, $bucketName, $expectedResult)
     {

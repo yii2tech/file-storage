@@ -15,7 +15,7 @@ use yii\base\Exception;
  * Connection represents SSH2 connection.
  *
  * @property resource|null $session the current SSH session resource pointer.
- * @property boolean $isActive whether the SSH connection is established or not.
+ * @property bool $isActive whether the SSH connection is established or not.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.1.0
@@ -27,7 +27,7 @@ class Connection extends Component
      */
     public $host = '127.0.0.1';
     /**
-     * @var integer SSH port
+     * @var int SSH port
      */
     public $port = 22;
     /**
@@ -87,7 +87,7 @@ class Connection extends Component
 
     /**
      * Returns the current SSH session resource pointer.
-     * @param boolean $open whether to automatically start new session, if has not been started yet.
+     * @param bool $open whether to automatically start new session, if has not been started yet.
      * @return resource|null current SSH session.
      */
     public function getSession($open = true)
@@ -100,7 +100,7 @@ class Connection extends Component
 
     /**
      * Returns a value indicating whether the SSH connection is established.
-     * @return boolean whether the SSH connection is established
+     * @return bool whether the SSH connection is established
      */
     public function getIsActive()
     {

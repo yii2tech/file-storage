@@ -58,7 +58,7 @@ class DownloadAction extends Action
      */
     public $exceptBuckets = [];
     /**
-     * @var boolean whether to check the requested file existence before attempt to get its content.
+     * @var bool whether to check the requested file existence before attempt to get its content.
      * You may disable this option in order to achieve better performance, however in this case
      * action flow may produce PHP error with some storages.
      */
@@ -108,7 +108,7 @@ class DownloadAction extends Action
     /**
      * Returns a value indicating whether the download from the specified bucket is allowed or not.
      * @param string $bucketName the name of the bucket.
-     * @return boolean whether the download from the bucket is allowed or not.
+     * @return bool whether the download from the bucket is allowed or not.
      */
     protected function isBucketAllowed($bucketName)
     {

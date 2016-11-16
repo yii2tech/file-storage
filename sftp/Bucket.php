@@ -60,7 +60,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * Composes the full file system name of the file.
      * @param string $fileName self name of the file.
-     * @param boolean $createPath whether to create directory path to the file or not.
+     * @param bool $createPath whether to create directory path to the file or not.
      * @return string full file name.
      */
     protected function prepareSftpFileName($fileName, $createPath = true)
@@ -108,7 +108,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * Creates a new directory.
      * @param string $path directory path to be created.
-     * @return boolean whether the directory is created successfully
+     * @return bool whether the directory is created successfully
      */
     protected function createDirectory($path)
     {

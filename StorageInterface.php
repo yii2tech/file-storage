@@ -21,7 +21,7 @@ interface StorageInterface
     /**
      * Sets the list of available buckets.
      * @param array $buckets - set of bucket instances or bucket configurations.
-     * @return boolean success.
+     * @return bool success.
      */
     public function setBuckets(array $buckets);
 
@@ -42,14 +42,14 @@ interface StorageInterface
      * Adds the bucket to the buckets list.
      * @param string $bucketName - name of the bucket.
      * @param mixed $bucketData - bucket instance or configuration array.
-     * @return boolean success.
+     * @return bool success.
      */
     public function addBucket($bucketName, $bucketData = []);
 
     /**
      * Indicates if the bucket has been set up in the storage.
      * @param string $bucketName - name of the bucket.
-     * @return boolean success.
+     * @return bool success.
      */
     public function hasBucket($bucketName);
 

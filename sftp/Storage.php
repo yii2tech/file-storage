@@ -15,6 +15,33 @@ use yii2tech\filestorage\BaseStorage;
  *
  * This storage requires [PHP ssh2 extension](http://php.net/manual/en/book.ssh2.php) to be installed.
  *
+ * Configuration example:
+ *
+ * ```php
+ * 'fileStorage' => [
+ *     'class' => 'yii2tech\filestorage\sftp\Storage',
+ *     'ssh' => [
+ *         'host' => 'file.server.com',
+ *         'port' => 22,
+ *         'username' => 'user',
+ *         'password' => 'some-password',
+ *     ],
+ *     'basePath' => '/var/www/html/files',
+ *     'baseUrl' => 'http://file.server.com/files',
+ *     'filePermission' => 0777,
+ *     'buckets' => [
+ *         'tempFiles' => [
+ *             'baseSubPath' => 'temp',
+ *             'fileSubDirTemplate' => '{^name}/{^^name}',
+ *         ],
+ *         'imageFiles' => [
+ *             'baseSubPath' => 'image',
+ *             'fileSubDirTemplate' => '{ext}/{^name}/{^^name}',
+ *         ],
+ *     ]
+ * ]
+ * ```
+ *
  * @see Connection
  *
  * @property resource $sftp related SFTP subsystem session.
@@ -42,7 +69,7 @@ class Storage extends BaseStorage
      */
     public $basePath;
     /**
-     * @var integer the chmod permission for directories and files,
+     * @var int the chmod permission for directories and files,
      * created in the process. Defaults to 0755 (owner rwx, group rx and others rx).
      */
     public $filePermission = 0755;

@@ -49,7 +49,7 @@ class Storage extends BaseStorage
      */
     public $bucketClassName = 'yii2tech\filestorage\local\Bucket';
     /**
-     * @var integer the chmod permission for directories and files,
+     * @var int the chmod permission for directories and files,
      * created in the process. Defaults to 0755 (owner rwx, group rx and others rx).
      */
     public $filePermission = 0755;

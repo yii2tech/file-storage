@@ -78,7 +78,7 @@ class Storage extends Component implements StorageInterface
     /**
      * Sets the list of available file storages.
      * @param StorageInterface[]|array $storages - set of file storage instances or file storage configurations.
-     * @return boolean success.
+     * @return bool success.
      */
     public function setStorages(array $storages)
     {
@@ -135,7 +135,7 @@ class Storage extends Component implements StorageInterface
      * @param string $storageName - name of the storage.
      * @param mixed $storageData - storage instance or configuration array.
      * @throws InvalidParamException on invalid data.
-     * @return boolean success.
+     * @return bool success.
      */
     public function addStorage($storageName, $storageData = [])
     {
@@ -152,7 +152,7 @@ class Storage extends Component implements StorageInterface
     /**
      * Indicates if the storage has been set up in the storage hub.
      * @param string $storageName - name of the storage.
-     * @return boolean success.
+     * @return bool success.
      */
     public function hasStorage($storageName)
     {
@@ -177,9 +177,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * Sets the list of available buckets.
-     * @param array $buckets - set of bucket instances or bucket configurations.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function setBuckets(array $buckets)
     {
@@ -188,8 +186,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * Gets the list of available bucket instances.
-     * @return array set of bucket instances.
+     * @inheritdoc
      */
     public function getBuckets()
     {
@@ -201,10 +198,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * Gets the bucket instance by name.
-     * @param string $bucketName - name of the bucket.
-     * @throws InvalidParamException if requested bucket does not exist.
-     * @return array set of bucket instances.
+     * @inheritdoc
      */
     public function getBucket($bucketName)
     {
@@ -219,10 +213,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * Adds the bucket to the buckets list.
-     * @param string $bucketName - name of the bucket.
-     * @param mixed $bucketData - bucket instance or configuration array.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function addBucket($bucketName, $bucketData = [])
     {
@@ -231,9 +222,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * Indicates if the bucket has been set up in the storage.
-     * @param string $bucketName - name of the bucket.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function hasBucket($bucketName)
     {

@@ -49,7 +49,7 @@ abstract class BaseStorage extends Component implements StorageInterface
      * Logs a message.
      * @see Logger
      * @param string $message message to be logged.
-     * @param integer $level the level of the message.
+     * @param int $level the level of the message.
      */
     protected function log($message, $level = Logger::LEVEL_INFO)
     {
@@ -76,9 +76,7 @@ abstract class BaseStorage extends Component implements StorageInterface
     }
 
     /**
-     * Sets the list of available buckets.
-     * @param array $buckets - set of bucket instances or bucket configurations.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function setBuckets(array $buckets)
     {
@@ -96,8 +94,7 @@ abstract class BaseStorage extends Component implements StorageInterface
     }
 
     /**
-     * Gets the list of available bucket instances.
-     * @return BucketInterface[] set of bucket instances.
+     * @inheritdoc
      */
     public function getBuckets()
     {
@@ -109,10 +106,7 @@ abstract class BaseStorage extends Component implements StorageInterface
     }
 
     /**
-     * Gets the bucket instance by name.
-     * @param string $bucketName - name of the bucket.
-     * @throws InvalidParamException if bucket does not exist.
-     * @return BucketInterface set of bucket instances.
+     * @inheritdoc
      */
     public function getBucket($bucketName)
     {
@@ -131,11 +125,7 @@ abstract class BaseStorage extends Component implements StorageInterface
     }
 
     /**
-     * Adds the bucket to the buckets list.
-     * @param string $bucketName - name of the bucket.
-     * @param mixed $bucketData - bucket instance or configuration array.
-     * @throws InvalidParamException on invalid data.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function addBucket($bucketName, $bucketData = [])
     {
@@ -153,9 +143,7 @@ abstract class BaseStorage extends Component implements StorageInterface
     }
 
     /**
-     * Indicates if the bucket has been set up in the storage.
-     * @param string $bucketName - name of the bucket.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function hasBucket($bucketName)
     {

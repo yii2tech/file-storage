@@ -124,6 +124,94 @@ required with this package by default, to be installed. Please check particular 
 for the details.
 
 
+## Abstraction usage <span id="abstraction-usage"></span>
+
+Each provided storage implements same interface for the files processing. Thus each storage can substitute another one,
+unless program code follows this interface. This allows you to switch between different storages without being need to
+adjust program source code. For example, at production server you may need to use SFTP for files storing and your application
+config looks like following:
+
+```php
+return [
+    'components' => [
+        'fileStorage' => [
+            'class' => 'yii2tech\filestorage\sftp\Storage',
+            'ssh' => [
+                'host' => 'file.server.com',
+                'username' => 'user',
+                'password' => 'some-password',
+            ],
+            'basePath' => '/var/www/html/files',
+            'baseUrl' => 'http://file.server.com/files',
+            'buckets' => [
+                'temp',
+                'item',
+            ]
+        ],
+        // ...
+    ],
+    // ...
+];
+```
+
+However, at development environment you may use simple local file storage instead:
+
+```php
+return [
+    'components' => [
+        'fileStorage' => [
+            'class' => 'yii2tech\filestorage\local\Storage',
+            'basePath' => '@webroot/files',
+            'baseUrl' => '@web/files',
+            'buckets' => [
+                'temp',
+                'item',
+            ]
+        ],
+        // ...
+    ],
+    // ...
+];
+```
+
+You can also combine several different storages using [[\yii2tech\filestorage\hub\Storage]], if necessary:
+
+```php
+return [
+    'components' => [
+        'fileStorage' => [
+            'class' => 'yii2tech\filestorage\hub\Storage',
+            'storages' => [
+                [
+                    'class' => 'yii2tech\filestorage\sftp\Storage',
+                    'ssh' => [
+                        'host' => 'file.server.com',
+                        'username' => 'user',
+                        'password' => 'some-password',
+                    ],
+                    'basePath' => '/var/www/html/files',
+                    'baseUrl' => 'http://file.server.com/files',
+                    'buckets' => [
+                        'item',
+                    ]
+                ],
+                [
+                    'class' => 'yii2tech\filestorage\local\Storage',
+                    'basePath' => '@webroot/files',
+                    'baseUrl' => '@web/files',
+                    'buckets' => [
+                        'temp',
+                    ]
+                ]
+            ],
+        ],
+        // ...
+    ],
+    // ...
+];
+```
+
+
 ## Accessing files by URL <span id="accessing-files-by-url"></span>
 
 Almost all file storage implementation, implemented in this extension, provide mechanism for accessing stored files

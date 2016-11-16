@@ -143,7 +143,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * Resolves file path, making sure it exists and writeable.
      * @param string $path file path to be resolved.
-     * @return boolean success.
+     * @return bool success.
      * @throws Exception on failure.
      */
     protected function resolvePath($path)
@@ -183,8 +183,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Creates this bucket.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function create()
     {
@@ -193,8 +192,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Destroys this bucket.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function destroy()
     {
@@ -206,8 +204,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Checks is bucket exists.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function exists()
     {
@@ -216,10 +213,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Saves content as new file.
-     * @param string $fileName - new file name.
-     * @param string $content - new file content.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function saveFileContent($fileName, $content)
     {
@@ -236,9 +230,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Returns content of an existing file.
-     * @param string $fileName - new file name.
-     * @return string $content - file content.
+     * @inheritdoc
      */
     public function getFileContent($fileName)
     {
@@ -248,9 +240,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Deletes an existing file.
-     * @param string $fileName - new file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function deleteFile($fileName)
     {
@@ -269,9 +259,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Checks if the file exists in the bucket.
-     * @param string $fileName - searching file name.
-     * @return boolean file exists.
+     * @inheritdoc
      */
     public function fileExists($fileName)
     {
@@ -280,10 +268,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Copies file from the OS file system into the bucket.
-     * @param string $srcFileName - OS full file name.
-     * @param string $fileName - new bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function copyFileIn($srcFileName, $fileName)
     {
@@ -299,10 +284,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Copies file from the bucket into the OS file system.
-     * @param string $fileName - bucket existing file name.
-     * @param string $destFileName - new OS full file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function copyFileOut($fileName, $destFileName)
     {
@@ -317,14 +299,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Copies file inside this bucket or between this bucket and another
-     * bucket of this file storage.
-     * File can be passed as string, which means the internal bucket file,
-     * or as an array of 2 elements: first one - the name of the bucket,
-     * the second one - name of the file in this bucket
-     * @param mixed $srcFile - this bucket existing file name or array reference to another bucket file name.
-     * @param mixed $destFile - this bucket existing file name or array reference to another bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function copyFileInternal($srcFile, $destFile)
     {
@@ -342,11 +317,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Copies file from the OS file system into the bucket and
-     * deletes the source file.
-     * @param string $srcFileName - OS full file name.
-     * @param string $fileName - new bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function moveFileIn($srcFileName, $fileName)
     {
@@ -354,11 +325,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Copies file from the bucket into the OS file system and
-     * deletes the source bucket file.
-     * @param string $fileName - bucket existing file name.
-     * @param string $destFileName - new OS full file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function moveFileOut($fileName, $destFileName)
     {
@@ -366,14 +333,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Moves file inside this bucket or between this bucket and another
-     * bucket of this file storage.
-     * File can be passed as string, which means the internal bucket file,
-     * or as an array of 2 elements: first one - the name of the bucket,
-     * the second one - name of the file in this bucket
-     * @param mixed $srcFile - this bucket existing file name or array reference to another bucket file name.
-     * @param mixed $destFile - this bucket existing file name or array reference to another bucket file name.
-     * @return boolean success.
+     * @inheritdoc
      */
     public function moveFileInternal($srcFile, $destFile)
     {

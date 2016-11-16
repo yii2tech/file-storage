@@ -98,8 +98,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param boolean $reset whether to clean up the test database
-     * @param boolean $open  whether to open test database
+     * @param bool $reset whether to clean up the test database
+     * @param bool $open  whether to open test database
      * @return \yii\mongodb\Connection
      */
     public function getMongodb($reset = false, $open = true)
@@ -123,7 +123,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param boolean $reset whether to clean up the test connection
+     * @param bool $reset whether to clean up the test connection
      * @return \yii2tech\filestorage\sftp\Connection SFTP connection instance.
      */
     public function getSsh($reset = false)
