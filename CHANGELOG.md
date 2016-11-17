@@ -1,8 +1,8 @@
 Yii 2 File Storage extension Change Log
 =======================================
 
-1.1.0 under development
------------------------
+1.1.0, November 17, 2016
+------------------------
 
 - Enh #4: Added `yii2tech\filestorage\BucketInterface::openFile()` allowing to open file as a PHP resource (klimov-paul)
 - Enh #6: SFTP file storage implemented via `yii2tech\filestorage\sftp\Storage` (klimov-paul)
