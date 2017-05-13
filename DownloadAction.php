@@ -108,10 +108,6 @@ class DownloadAction extends Action
 
         $mimeType = FileHelper::getMimeTypeByExtension($filename);
 
-        if (empty($mimeType)) {
-            $mimeType = 'application/octet-stream';
-        }
-
         $inline = is_callable($this->inline) ? call_user_func($this->inline, $bucket, $filename) : $this->inline;
 
         $handle = $bucket->openFile($filename, 'r');
