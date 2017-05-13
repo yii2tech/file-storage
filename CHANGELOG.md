@@ -1,6 +1,12 @@
 Yii 2 File Storage extension Change Log
 =======================================
 
+1.1.0 under development
+-----------------------
+
+- Enh #8: Added `yii2tech\filestorage\DownloadAction::$inline` allowing to send inline file to the browser and providing `content-range` support (vuongminh)
+
+
 1.1.0, November 17, 2016
 ------------------------
 

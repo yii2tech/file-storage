@@ -50,8 +50,32 @@ class DownloadActionTest extends TestCase
         $bucket->saveFileContent($fileName, $fileContent);
 
         $response = $action->run($bucket->getName(), $fileName);
-        $this->assertEquals($fileContent, $response->content);
+        list ($handle) = $response->stream;
+        fseek($handle, 0);
+        $this->assertEquals(stream_get_contents($handle), $fileContent);
         $this->assertEquals('text/plain', $response->getHeaders()->get('content-type'));
+        $this->assertTrue(stripos($response->getHeaders()->get('content-disposition'), 'attachment; filename=') !== false);
+    }
+
+    /**
+     * @depends testSuccess
+     */
+    public function testInline()
+    {
+        $fileStorage = $this->createFileStorage();
+        $action = $this->createAction(['fileStorage' => $fileStorage, 'inline' => true]);
+        $bucket = $fileStorage->getBucket('temp');
+
+        $fileName = 'success.txt';
+        $fileContent = 'Success content';
+        $bucket->saveFileContent($fileName, $fileContent);
+
+        $response = $action->run($bucket->getName(), $fileName);
+        list ($handle) = $response->stream;
+        fseek($handle, 0);
+        $this->assertEquals(stream_get_contents($handle), $fileContent);
+        $this->assertEquals('text/plain', $response->getHeaders()->get('content-type'));
+        $this->assertTrue(stripos($response->getHeaders()->get('content-disposition'), 'inline; filename=') !== false);
     }
 
     public function testInvalidBucket()
