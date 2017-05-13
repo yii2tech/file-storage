@@ -63,7 +63,23 @@ class DownloadAction extends Action
      * action flow may produce PHP error with some storages.
      */
     public $checkFileExistence = true;
-
+    /**
+     * @var bool|callable whether the browser should open the file within the browser window. Defaults to false.
+     * When using a callable, its signature should be `function ($bucket, $filename)`,
+     * for example: only inline css and javascript.
+     *
+     * Callable example:
+     *
+     * ```php
+     * [
+     *      'inline' => function($bucket, $filename) {
+     *          return in_array(pathinfo($filename, PATHINFO_EXTENSION),  ['css', 'js']);
+     *      }
+     * ]
+     *
+     * ```
+     */
+    public $inline = false;
 
     /**
      * Runs the action.
@@ -90,19 +106,20 @@ class DownloadAction extends Action
             throw new NotFoundHttpException("File '{$filename}' does not exist at bucket '{$bucket->getName()}' does not exist.");
         }
 
-        $response = Yii::$app->getResponse();
-        $response->content = $bucket->getFileContent($filename);
-
-        $response->format = Response::FORMAT_RAW;
-
         $mimeType = FileHelper::getMimeTypeByExtension($filename);
+
         if (empty($mimeType)) {
             $mimeType = 'application/octet-stream';
         }
 
-        $response->getHeaders()->add('Content-Type', $mimeType);
+        $inline = is_callable($this->inline) ? call_user_func($this->inline, $bucket, $filename) : $this->inline;
 
-        return $response;
+        $handle = $bucket->openFile($filename, 'r');
+
+        return Yii::$app->getResponse()->sendStreamAsFile($handle, basename($filename), [
+            'inline' => $inline,
+            'mimeType' => $mimeType
+        ]);
     }
 
     /**
