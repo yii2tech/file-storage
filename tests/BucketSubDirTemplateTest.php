@@ -33,7 +33,9 @@ class BucketSubDirTemplateTest extends TestCase
             'getFileUrl',
             'openFile',
         ];
-        $bucket = $this->getMock('yii2tech\filestorage\BucketSubDirTemplate', $methodsList);
+        $bucket = $this->getMockBuilder('yii2tech\filestorage\BucketSubDirTemplate')
+            ->setMethods($methodsList)
+            ->getMock();
         return $bucket;
     }
 

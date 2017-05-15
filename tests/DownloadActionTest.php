@@ -59,7 +59,7 @@ class DownloadActionTest extends TestCase
         $fileStorage = $this->createFileStorage();
         $action = $this->createAction(['fileStorage' => $fileStorage]);
 
-        $this->setExpectedException('yii\web\NotFoundHttpException');
+        $this->expectException('yii\web\NotFoundHttpException');
 
         $response = $action->run('unexisting', 'some.txt');
     }
@@ -70,7 +70,7 @@ class DownloadActionTest extends TestCase
         $action = $this->createAction(['fileStorage' => $fileStorage]);
         $bucket = $fileStorage->getBucket('temp');
 
-        $this->setExpectedException('yii\web\NotFoundHttpException');
+        $this->expectException('yii\web\NotFoundHttpException');
 
         $response = $action->run($bucket->getName(), 'some.txt');
     }

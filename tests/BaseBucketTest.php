@@ -32,7 +32,9 @@ class BaseBucketTest extends TestCase
             'getFileUrl',
             'openFile',
         ];
-        $bucket = $this->getMock('yii2tech\filestorage\BaseBucket', $methodsList);
+        $bucket = $this->getMockBuilder('yii2tech\filestorage\BaseBucket')
+            ->setMethods($methodsList)
+            ->getMock();
         return $bucket;
     }
 
@@ -46,7 +48,7 @@ class BaseBucketTest extends TestCase
         $this->assertTrue($bucket->setName($testName), 'Unable to set name!');
         $this->assertEquals($bucket->getName(), $testName, 'Unable to set name! correctly');
 
-        $testStorage = $this->getMock('yii2tech\filestorage\BaseStorage');
+        $testStorage = $this->getMockBuilder('yii2tech\filestorage\BaseStorage')->getMock();
         $this->assertTrue($bucket->setStorage($testStorage), 'Unable to set storage!');
         $this->assertEquals($bucket->getStorage(), $testStorage, 'Unable to set storage correctly!');
     }

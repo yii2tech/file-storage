@@ -19,7 +19,9 @@ class BaseStorageTest extends TestCase
         $methodsList = [
             'init',
         ];
-        $fileStorage = $this->getMock('yii2tech\filestorage\BaseStorage', $methodsList);
+        $fileStorage = $this->getMockBuilder('yii2tech\filestorage\BaseStorage')
+            ->setMethods($methodsList)
+            ->getMock();
         return $fileStorage;
     }
 
@@ -45,7 +47,9 @@ class BaseStorageTest extends TestCase
             'getFileUrl',
             'openFile',
         ];
-        $bucket = $this->getMock('yii2tech\filestorage\BaseBucket', $methodsList);
+        $bucket = $this->getMockBuilder('yii2tech\filestorage\BaseBucket')
+            ->setMethods($methodsList)
+            ->getMock();
         return $bucket;
     }
 

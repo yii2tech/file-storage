@@ -23,7 +23,9 @@ class StorageTest extends TestCase
         $methodsList = [
             'init',
         ];
-        $fileStorage = $this->getMock(\yii2tech\filestorage\local\Storage::className(), $methodsList);
+        $fileStorage = $this->getMockBuilder(\yii2tech\filestorage\local\Storage::className())
+            ->setMethods($methodsList)
+            ->getMock();
         return $fileStorage;
     }
 
@@ -48,7 +50,9 @@ class StorageTest extends TestCase
             'moveFileInternal',
             'getFileUrl',
         ];
-        $bucket = $this->getMock(Bucket::className(), $methodsList);
+        $bucket = $this->getMockBuilder(Bucket::className())
+            ->setMethods($methodsList)
+            ->getMock();
         return $bucket;
     }
 
