@@ -60,7 +60,7 @@ abstract class BucketSubDirTemplate extends BaseBucket
     }
 
     /**
-     * Gets file storage sub dirs path, resolving {@link subDirTemplate}.
+     * Gets file storage sub dirs path, resolving [[subDirTemplate]].
      * @param string $fileName - name of the file.
      * @return string file sub dir value.
      */
@@ -77,7 +77,7 @@ abstract class BucketSubDirTemplate extends BaseBucket
     }
 
     /**
-     * Internal callback function for {@link getFileSubDir}.
+     * Internal callback function for [[getFileSubDir()]].
      * @param array $matches set of regular expression matches.
      * @throws Exception on failure.
      * @return string value of the placeholder.

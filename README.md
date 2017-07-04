@@ -303,7 +303,7 @@ fclose($resource);
 ```
 
 > Note: You should prefer usage of simple modes like `r` and `w`, avoiding complex ones like `w+`, as they
-  may not supported by some storages.
+  may be not supported by some storages.
 
 
 ## Logging <span id="logging"></span>

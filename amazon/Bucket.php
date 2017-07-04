@@ -30,18 +30,11 @@ use yii2tech\filestorage\BucketSubDirTemplate;
 class Bucket extends BucketSubDirTemplate
 {
     /**
-     * @var string Storage DNS URL name.
-     * This name will be used as actual bucket name in Amazon S3.
-     * If this field is left blank its value will be
-     * generated using {@link name}.
-     * @see \Aws\S3\S3Client::isValidBucketName()
-     */
-    private $_urlName;
-    /**
      * @var string Amazon region name of the bucket.
      * You can setup this value as a short alias of the real region name
      * according the following map:
-     * <pre>
+     *
+     * ```php
      * 'us_e1' => \Aws\Common\Enum\Region::US_EAST_1
      * 'us_w1' => \Aws\Common\Enum\Region::US_WEST_1
      * 'us_w2' => \Aws\Common\Enum\Region::US_WEST_2
@@ -50,7 +43,8 @@ class Bucket extends BucketSubDirTemplate
      * 'apac_se2' => \Aws\Common\Enum\Region::AP_SOUTHEAST_2
      * 'apac_ne1' => \Aws\Common\Enum\Region::AP_NORTHEAST_1
      * 'sa_e1' => \Aws\Common\Enum\Region::SA_EAST_1
-     * </pre>
+     * ```
+     *
      * @see AmazonS3
      */
     public $region = 'eu_w1';
@@ -73,12 +67,20 @@ class Bucket extends BucketSubDirTemplate
     public $acl = 'private';
 
     /**
-     * @var string actual value of {@link region}.
+     * @var string Storage DNS URL name.
+     * This name will be used as actual bucket name in Amazon S3.
+     * If this field is left blank its value will be
+     * generated using [[name]].
+     * @see \Aws\S3\S3Client::isValidBucketName()
+     */
+    private $_urlName;
+    /**
+     * @var string actual value of [[region]].
      * This field is for the internal usage only.
      */
     private $_actualRegion;
     /**
-     * @var string actual value of {@link acl}.
+     * @var string actual value of [[acl]].
      * This field is for the internal usage only.
      */
     private $_actualAcl;
@@ -115,7 +117,7 @@ class Bucket extends BucketSubDirTemplate
 
     /**
      * Returns the full internal file name, including
-     * path resolved from {@link QsFileStorageBucketSubDirTemplate::fileSubDirTemplate}.
+     * path resolved from [[BucketSubDirTemplate::$fileSubDirTemplate]].
      * @param string $fileName - name of the file.
      * @return string full name of the file.
      */
@@ -149,7 +151,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Returns the actual Amazon region value from the {@link region}.
+     * Returns the actual Amazon region value from the [[region]].
      * @throws InvalidConfigException on invalid region.
      * @return string actual Amazon region.
      */
@@ -166,7 +168,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Returns the actual Amazon region value from the {@link region}.
+     * Returns the actual Amazon region value from the [[region]].
      * @param string $region raw region value.
      * @return string actual Amazon region.
      */
@@ -563,7 +565,7 @@ class Bucket extends BucketSubDirTemplate
 
     /**
      * Copies given files into the bucket in parallel.
-     * @param array $filesMap files map in format: srcFileName => bucketFileName
+     * @param array $filesMap files map in format: `srcFileName => bucketFileName`
      * @return bool success.
      */
     public function copyFileInBatch(array $filesMap)

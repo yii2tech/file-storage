@@ -12,8 +12,7 @@ use yii\base\InvalidConfigException;
 use yii2tech\filestorage\BaseStorage;
 
 /**
- * Storage introduces the file storage based on
- * Amazon Simple Storage Service (S3).
+ * Storage introduces the file storage based on Amazon Simple Storage Service (S3).
  *
  * In order to use this storage you need to install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2:
  *
