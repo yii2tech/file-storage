@@ -45,7 +45,8 @@ class StorageTest extends TestCase
 
     // Tests:
 
-    public function testSetGet() {
+    public function testSetGet()
+    {
         $fileStorage = $this->createFileStorage();
         
         $testAmazonS3 = new \stdClass();
@@ -62,5 +63,22 @@ class StorageTest extends TestCase
         
         $defaultAmazonS3 = $fileStorage->getAmazonS3();
         $this->assertTrue(is_object($defaultAmazonS3), 'Unable to get default amazon S3 object!');
+
+        $this->assertEquals($fileStorage->awsKey, $defaultAmazonS3->getCredentials()->getAccessKeyId(), 'Unable to pass AWS key!');
+        $this->assertEquals($fileStorage->awsSecretKey, $defaultAmazonS3->getCredentials()->getSecretKey(), 'Unable to pass AWS secret key!');
+    }
+
+    /**
+     * @depends testGetDefaultAmazonS3
+     */
+    public function testAmazonS3Config()
+    {
+        $fileStorage = $this->createFileStorage();
+        $fileStorage->amazonS3Config = [
+            'region' => 'eu-central-1',
+        ];
+
+        $amazonS3 = $fileStorage->getAmazonS3();
+        $this->assertEquals($fileStorage->amazonS3Config['region'], $amazonS3->getRegion());
     }
 }

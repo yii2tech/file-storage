@@ -264,11 +264,11 @@ class Bucket extends BucketSubDirTemplate
     public function create()
     {
         $amazonS3 = $this->getStorage()->getAmazonS3();
-        $amazonS3->createBucket(array(
+        $amazonS3->createBucket([
             'Bucket' => $this->getUrlName(),
             'LocationConstraint' => $this->getActualRegion(),
             'ACL' => $this->getActualAcl(),
-        ));
+        ]);
         $this->log('bucket has been created with URL name "' . $this->getUrlName() . '"');
         return true;
     }

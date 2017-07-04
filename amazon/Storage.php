@@ -66,6 +66,13 @@ class Storage extends BaseStorage
      * If constant 'AWS_SECRET_KEY' has been defined, this field can be left blank.
      */
     public $awsSecretKey = '';
+    /**
+     * @var array additional configuration options for S3 client.
+     * Please refer to [[S3Client::factory()]] for available options list.
+     * @see S3Client::factory()
+     * @since 1.1.2
+     */
+    public $amazonS3Config = [];
 
     /**
      * @var S3Client instance of the Amazon S3 client.
@@ -106,11 +113,11 @@ class Storage extends BaseStorage
      */
     protected function createAmazonS3()
     {
-        $amazonS3Options = [
+        $clientConfig = array_merge($this->amazonS3Config, [
             'key' => $this->awsKey,
             'secret' => $this->awsSecretKey,
-        ];
-        return S3Client::factory($amazonS3Options);
+        ]);
+        return S3Client::factory($clientConfig);
     }
 
     /**
