@@ -1,8 +1,8 @@
 Yii 2 File Storage extension Change Log
 =======================================
 
-1.1.2 under development
------------------------
+1.1.2, July 7, 2017
+-------------------
 
 - Enh #10: Added `yii2tech\amazon\Storage::$amazonS3Config` allowing setup of `Aws\S3\S3Client` instantiation options (klimov-paul)
 
