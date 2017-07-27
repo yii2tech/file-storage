@@ -1,5 +1,10 @@
-File Storage Extension for Yii 2
-================================
+<p align="center">
+    <a href="https://github.com/yii2tech" target="_blank">
+        <img src="https://avatars2.githubusercontent.com/u/12951949" height="100px">
+    </a>
+    <h1 align="center">File Storage Extension for Yii 2</h1>
+    <br>
+</p>
 
 This extension provides file storage abstraction layer for Yii2.
 
