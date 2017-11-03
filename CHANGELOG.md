@@ -1,6 +1,12 @@
 Yii 2 File Storage extension Change Log
 =======================================
 
+1.1.3 under development
+-----------------------
+
+- Bug: Usage of deprecated `yii\base\Object` changed to `yii\base\BaseObject` allowing compatibility with PHP 7.2 (klimov-paul)
+
+
 1.1.2, July 7, 2017
 -------------------
 

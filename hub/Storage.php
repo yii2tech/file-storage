@@ -177,7 +177,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setBuckets(array $buckets)
     {
@@ -186,7 +186,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBuckets()
     {
@@ -198,7 +198,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBucket($bucketName)
     {
@@ -213,7 +213,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addBucket($bucketName, $bucketData = [])
     {
@@ -222,7 +222,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function hasBucket($bucketName)
     {
@@ -237,7 +237,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setBaseUrl($baseUrl)
     {
@@ -247,7 +247,7 @@ class Storage extends Component implements StorageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getBaseUrl()
     {

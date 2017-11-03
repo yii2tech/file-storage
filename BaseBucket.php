@@ -8,7 +8,7 @@
 namespace yii2tech\filestorage;
 
 use Yii;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\helpers\Url;
 use yii\log\Logger;
 
@@ -21,7 +21,7 @@ use yii\log\Logger;
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
  */
-abstract class BaseBucket extends Object implements BucketInterface
+abstract class BaseBucket extends BaseObject implements BucketInterface
 {
     /**
      * @var string bucket name.
@@ -89,7 +89,7 @@ abstract class BaseBucket extends Object implements BucketInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFileUrl($fileName)
     {

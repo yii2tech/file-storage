@@ -19,7 +19,7 @@ class BucketTest extends TestCase
     use BucketTestTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -30,7 +30,7 @@ class BucketTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function tearDown()
     {

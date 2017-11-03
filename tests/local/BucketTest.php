@@ -20,7 +20,7 @@ class BucketTest extends TestCase
     use BucketTestTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -31,7 +31,7 @@ class BucketTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function tearDown()
     {
@@ -113,7 +113,7 @@ class BucketTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function testCreateBucket()
     {
@@ -128,7 +128,7 @@ class BucketTest extends TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function testBucketDestroy()
     {
@@ -145,7 +145,7 @@ class BucketTest extends TestCase
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function testGetFileUrl()
     {

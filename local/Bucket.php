@@ -183,7 +183,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function create()
     {
@@ -192,7 +192,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function destroy()
     {
@@ -204,7 +204,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function exists()
     {
@@ -213,7 +213,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function saveFileContent($fileName, $content)
     {
@@ -230,7 +230,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getFileContent($fileName)
     {
@@ -240,7 +240,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function deleteFile($fileName)
     {
@@ -259,7 +259,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function fileExists($fileName)
     {
@@ -268,7 +268,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function copyFileIn($srcFileName, $fileName)
     {
@@ -284,7 +284,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function copyFileOut($fileName, $destFileName)
     {
@@ -299,7 +299,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function copyFileInternal($srcFile, $destFile)
     {
@@ -317,7 +317,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function moveFileIn($srcFileName, $fileName)
     {
@@ -325,7 +325,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function moveFileOut($fileName, $destFileName)
     {
@@ -333,7 +333,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function moveFileInternal($srcFile, $destFile)
     {
@@ -346,7 +346,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function composeFileUrl($baseUrl, $fileName)
     {
@@ -360,7 +360,7 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function openFile($fileName, $mode, $context = null)
     {

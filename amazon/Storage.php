@@ -53,7 +53,7 @@ use yii2tech\filestorage\BaseStorage;
 class Storage extends BaseStorage
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public $bucketClassName = 'yii2tech\filestorage\amazon\Bucket';
     /**

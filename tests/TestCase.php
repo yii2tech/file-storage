@@ -27,7 +27,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -37,7 +37,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function tearDown()
     {

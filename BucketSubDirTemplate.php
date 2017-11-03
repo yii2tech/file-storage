@@ -140,7 +140,7 @@ abstract class BucketSubDirTemplate extends BaseBucket
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function composeFileUrl($baseUrl, $fileName)
     {
