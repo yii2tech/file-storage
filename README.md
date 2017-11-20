@@ -84,7 +84,8 @@ return [
             'class' => 'yii2tech\filestorage\local\Storage',
             'basePath' => '@webroot/files',
             'baseUrl' => '@web/files',
-            'filePermission' => 0777,
+            'dirPermission' => 0775,
+            'filePermission' => 0755,
             'buckets' => [
                 'tempFiles' => [
                     'baseSubPath' => 'temp',

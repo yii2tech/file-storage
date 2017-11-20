@@ -20,7 +20,8 @@ use yii2tech\filestorage\BaseStorage;
  *     'class' => 'yii2tech\filestorage\local\Storage',
  *     'basePath' => '@webroot/files',
  *     'baseUrl' => '@web/files',
- *     'filePermission' => 0777,
+ *     'dirPermission' => 0775,
+ *     'filePermission' => 0755,
  *     'buckets' => [
  *         'tempFiles' => [
  *             'baseSubPath' => 'temp',
@@ -54,10 +55,28 @@ class Storage extends BaseStorage
      */
     public $filePermission = 0755;
     /**
+     * @var int the chmod permission for the directories created in the process.
+     * If not set - value of [[filePermission]] will be used.
+     * @since 1.1.4
+     */
+    public $dirPermission;
+    /**
      * @var string file system path, which is basic for all buckets.
      */
     private $_basePath = '';
 
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        parent::init();
+
+        if ($this->dirPermission === null) {
+            $this->dirPermission = $this->filePermission;
+        }
+    }
 
     /**
      * @param string $basePath file system path, which is basic for all buckets.

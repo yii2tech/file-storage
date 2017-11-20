@@ -149,9 +149,8 @@ class Bucket extends BucketSubDirTemplate
     protected function resolvePath($path)
     {
         if (!file_exists($path)) {
-            $dirPermission = $this->getStorage()->filePermission;
             $this->log("creating file path '{$path}'");
-            FileHelper::createDirectory($path, $dirPermission);
+            FileHelper::createDirectory($path, $this->getStorage()->dirPermission);
         }
         if (!is_dir($path)) {
             throw new Exception("Path '{$path}' is not a directory!");
