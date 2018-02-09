@@ -1,7 +1,7 @@
 Yii 2 File Storage extension Change Log
 =======================================
 
-1.1.4 under development
+1.1.4, February 9, 2018
 -----------------------
 
 - Enh #10: Added `yii2tech\filestorage\local\Storage::$dirPermission` allowing setup of directory permissions different from file permissions (klimov-paul)
