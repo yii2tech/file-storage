@@ -14,11 +14,21 @@ use yii2tech\filestorage\BaseStorage;
 /**
  * Storage introduces the file storage based on Amazon Simple Storage Service (S3).
  *
- * In order to use this storage you need to install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2:
+ * In order to use this storage you need to install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2.
+ *
+ * Either run
  *
  * ```
  * composer require --prefer-dist aws/aws-sdk-php:~2.0
  * ```
+ *
+ * or add
+ *
+ * ```json
+ * "aws/aws-sdk-php": "~2.0"
+ * ```
+ *
+ * to the require section of your composer.json.
  *
  * Configuration example:
  *
@@ -34,6 +44,43 @@ use yii2tech\filestorage\BaseStorage;
  *         ],
  *         'imageFiles' => [
  *             'region' => 'eu_w1',
+ *             'acl' => 'public',
+ *         ],
+ *     ]
+ * ]
+ * ```
+ *
+ * In order to use some features, such as server side encryption, you may instead need to install
+ * [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 3.
+ *
+ * Either run
+ *
+ * ```
+ * composer require --prefer-dist aws/aws-sdk-php:~3.0
+ * ```
+ *
+ * or add
+ *
+ * ```json
+ * "aws/aws-sdk-php": "~3.0"
+ * ```
+ *
+ * to the require section of your composer.json.
+ *
+ * Configuration example:
+ *
+ * ```php
+ * 'fileStorage' => [
+ *     'class' => 'yii2tech\filestorage\amazon\Storage',
+ *     'awsKey' => 'AWSKEY',
+ *     'awsSecretKey' => 'AWSSECRETKEY',
+ *     'awsRegion' => 'AWSREGION',
+ *     'buckets' => [
+ *         'tempFiles' => [
+ *             'acl' => 'private',
+ *             'serverSideEncryption' => 'aws:kms',
+ *         ],
+ *         'imageFiles' => [
  *             'acl' => 'public',
  *         ],
  *     ]
@@ -66,6 +113,16 @@ class Storage extends BaseStorage
      * If constant 'AWS_SECRET_KEY' has been defined, this field can be left blank.
      */
     public $awsSecretKey = '';
+    /**
+     * @var string AWS (Amazon Web Service) region name.
+     * Only required if using Version 3 of the AWS PHP SDK.
+     */
+    public $awsRegion = '';
+    /**
+     * @var string AWS (Amazon Web Service) API version.
+     * Only required if using Version 3 of the AWS PHP SDK.
+     */
+    public $awsVersion = 'latest';
     /**
      * @var array additional configuration options for S3 client.
      * Please refer to [[S3Client::factory()]] for available options list.
@@ -113,10 +170,15 @@ class Storage extends BaseStorage
      */
     protected function createAmazonS3()
     {
-        $clientConfig = array_merge($this->amazonS3Config, [
+        $args = [
             'key' => $this->awsKey,
             'secret' => $this->awsSecretKey,
-        ]);
+        ];
+        if ($this->awsRegion) {
+            $args['region'] = $this->awsRegion;
+            $args['version'] = $this->awsVersion;
+        }
+        $clientConfig = array_merge($this->amazonS3Config, $args);
         return S3Client::factory($clientConfig);
     }
 
@@ -132,4 +194,28 @@ class Storage extends BaseStorage
             $this->streamWrapperRegistered = true;
         }
     }
+
+    /**
+     * Returns the AWS PHP SDK version number.
+     *
+     * @return string
+     */
+    public function getAmazonSDKVersion()
+    {
+        if (class_exists('Aws\Sdk')) {
+            return \Aws\Sdk::VERSION;
+        }
+        return \Aws\Common\Aws::VERSION;
+    }
+
+    /**
+     * Indicates if version 2 of the AWS PHP SDK is being used.
+     *
+     * @return bool
+     */
+    public function isAmazonSDKVersion2()
+    {
+        return preg_match('/^2\./', $this->getAmazonSDKVersion()) > 0;
+    }
+
 }

@@ -7,8 +7,6 @@
 
 namespace yii2tech\filestorage\amazon;
 
-use Aws\Common\Enum\Region;
-use Aws\S3\Enum\CannedAcl;
 use yii\base\InvalidConfigException;
 use yii\log\Logger;
 use yii2tech\filestorage\BucketSubDirTemplate;
@@ -31,40 +29,48 @@ class Bucket extends BucketSubDirTemplate
 {
     /**
      * @var string Amazon region name of the bucket.
-     * You can setup this value as a short alias of the real region name
+     * Only required if using Version 2 of the AWS PHP SDK.
+     * You can setup this value as the real region name
+     * or a short alias of the real region name
      * according the following map:
      *
      * ```php
-     * 'us_e1' => \Aws\Common\Enum\Region::US_EAST_1
-     * 'us_w1' => \Aws\Common\Enum\Region::US_WEST_1
-     * 'us_w2' => \Aws\Common\Enum\Region::US_WEST_2
-     * 'eu_w1' => \Aws\Common\Enum\Region::EU_WEST_1
-     * 'apac_se1' => \Aws\Common\Enum\Region::AP_SOUTHEAST_1
-     * 'apac_se2' => \Aws\Common\Enum\Region::AP_SOUTHEAST_2
-     * 'apac_ne1' => \Aws\Common\Enum\Region::AP_NORTHEAST_1
-     * 'sa_e1' => \Aws\Common\Enum\Region::SA_EAST_1
+     * 'us_e1' => 'us-east-1'
+     * 'us_w1' => 'us-west-1'
+     * 'us_w2' => 'us-west-2'
+     * 'eu_w1' => 'eu-west-1'
+     * 'apac_se1' => 'ap-southeast-1'
+     * 'apac_se2' => 'ap-southeast-2'
+     * 'apac_ne1' => 'ap-northeast-1'
+     * 'sa_e1' => 'sa-east-1'
      * ```
      *
      * @see AmazonS3
      */
-    public $region = 'eu_w1';
+    public $region = null;
     /**
      * @var mixed bucket ACL policy.
-     * You can setup this value as a short alias of the real region name
+     * You can setup this value as the real ACL policy name
+     * or a short alias of the real ACL policy name
      * according the following map:
      *
      * ```php
-     * 'private' => \Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS
-     * 'public' =>\Aws\S3\Enum\CannedAcl::PUBLIC_READ
-     * 'open' =>\Aws\S3\Enum\CannedAcl::PUBLIC_READ_WRITE
-     * 'auth_read' =>\Aws\S3\Enum\CannedAcl::AUTHENTICATED_READ
-     * 'owner_read' =>\Aws\S3\Enum\CannedAcl::BUCKET_OWNER_READ
-     * 'owner_full_control' =>\Aws\S3\Enum\CannedAcl::BUCKET_OWNER_FULL_CONTROL
+     * 'private' => 'private'
+     * 'public' => 'public-read'
+     * 'open' => 'public-read-write'
+     * 'auth_read' => 'authenticated-read'
+     * 'owner_read' => 'bucket-owner-read'
+     * 'owner_full_control' => 'bucket-owner-full-control'
      * ```
      *
      * @see AmazonS3
      */
     public $acl = 'private';
+    /**
+     * @var string encryption type
+     * Requires Version 3 of the AWS PHP SDK.
+     */
+    public $serverSideEncryption = null;
 
     /**
      * @var string Storage DNS URL name.
@@ -85,6 +91,18 @@ class Bucket extends BucketSubDirTemplate
      */
     private $_actualAcl;
 
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        parent::init();
+        if ($this->getStorage()->isAmazonSDKVersion2()) {
+            if ($this->region == null) {
+                $this->region = 'eu_w1';
+            }
+        }
+    }
 
     /**
      * @param string $urlName storage DNS URL name.
@@ -177,36 +195,34 @@ class Bucket extends BucketSubDirTemplate
         switch ($region) {
             // USA :
             case 'us_e1': {
-                return Region::US_EAST_1;
+                return 'us-east-1';
             }
             case 'us_w1': {
-                return Region::US_WEST_1;
+                return 'us-west-1';
             }
             case 'us_w2': {
-                return Region::US_WEST_2;
+                return 'us-west-2';
             }
             // Europe :
             case 'eu_w1': {
-                return Region::EU_WEST_1;
+                return 'eu-west-1';
             }
             // AP :
             case 'apac_se1': {
-                return Region::AP_SOUTHEAST_1;
+                return 'ap-southeast-1';
             }
             case 'apac_se2': {
-                return Region::AP_SOUTHEAST_2;
+                return 'ap-southeast-2';
             }
             case 'apac_ne1': {
-                return Region::AP_NORTHEAST_1;
+                return 'ap-northeast-1';
             }
             // South America :
             case 'sa_e1': {
-                return Region::SA_EAST_1;
-            }
-            default: {
-                return $region;
+                return 'sa-east-1';
             }
         }
+        return $region;
     }
 
     /**
@@ -234,28 +250,23 @@ class Bucket extends BucketSubDirTemplate
     protected function fetchActualAcl($acl)
     {
         switch ($acl) {
-            case 'private': {
-                return CannedAcl::PRIVATE_ACCESS;
-            }
             case 'public': {
-                return CannedAcl::PUBLIC_READ;
+                return 'public-read';
             }
             case 'open': {
-                return CannedAcl::PUBLIC_READ_WRITE;
+                return 'public-read-write';
             }
             case 'auth_read': {
-                return CannedAcl::AUTHENTICATED_READ;
+                return 'authenticated-read';
             }
             case 'owner_read': {
-                return CannedAcl::BUCKET_OWNER_READ;
+                return 'bucket-owner-read';
             }
             case 'owner_full_control': {
-                return CannedAcl::BUCKET_OWNER_FULL_CONTROL;
-            }
-            default: {
-                return $acl;
+                return 'bucket-owner-full-control';
             }
         }
+        return $acl;
     }
 
     /**
@@ -263,12 +274,15 @@ class Bucket extends BucketSubDirTemplate
      */
     public function create()
     {
-        $amazonS3 = $this->getStorage()->getAmazonS3();
-        $amazonS3->createBucket([
+        $args = [
             'Bucket' => $this->getUrlName(),
-            'LocationConstraint' => $this->getActualRegion(),
             'ACL' => $this->getActualAcl(),
-        ]);
+        ];
+        if ($this->getStorage()->isAmazonSDKVersion2()) {
+            $args['LocationConstraint'] = $this->getActualRegion();
+        }
+        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3->createBucket($args);
         $this->log('bucket has been created with URL name "' . $this->getUrlName() . '"');
         return true;
     }
@@ -317,6 +331,9 @@ class Bucket extends BucketSubDirTemplate
             'Body' => $content,
             'ACL' => $this->getActualAcl(),
         ];
+        if ($this->serverSideEncryption) {
+            $args['ServerSideEncryption'] = $this->serverSideEncryption;
+        }
         try {
             $amazonS3->putObject($args);
             $this->log("file '{$fileName}' has been saved");
@@ -342,6 +359,9 @@ class Bucket extends BucketSubDirTemplate
             'Bucket' => $this->getUrlName(),
             'Key' => $fileName,
         ];
+        if ($this->serverSideEncryption) {
+            $args['ServerSideEncryption'] = $this->serverSideEncryption;
+        }
         $response = $amazonS3->getObject($args);
         $fileContent = $response['Body'];
         $this->log("content of file '{$fileName}' has been returned");
@@ -421,25 +441,27 @@ class Bucket extends BucketSubDirTemplate
         $destFileRef = $this->getFileAmazonComplexReference($destFile);
 
         $srcBucket = $storage->getBucket($srcFileRef['bucket']);
-
         if (!$srcBucket->exists()) {
             $srcBucket->create();
             $srcFileRef['filename'] = $srcBucket->getFullFileName($srcFileRef['filename']);
-            $srcFileRef['bucket'] = $srcBucket->getUrlName();
         }
+        $srcFileRef['bucket'] = $srcBucket->getUrlName();
 
         $destBucket = $storage->getBucket($destFileRef['bucket']);
         if (!$destBucket->exists()) {
             $destBucket->create();
             $destFileRef['filename'] = $destBucket->getFullFileName($destFileRef['filename']);
-            $destFileRef['bucket'] = $destBucket->getUrlName();
         }
+        $destFileRef['bucket'] = $destBucket->getUrlName();
 
         $args = [
             'Bucket' => $destFileRef['bucket'],
             'Key' => $destFileRef['filename'],
             'CopySource' => urlencode($srcFileRef['bucket'] . '/' . $srcFileRef['filename']),
         ];
+        if ($this->serverSideEncryption) {
+            $args['ServerSideEncryption'] = $this->serverSideEncryption;
+        }
 
         try {
             $amazonS3->copyObject($args);
@@ -550,6 +572,9 @@ class Bucket extends BucketSubDirTemplate
                 'Key' => $this->getFullFileName($fileName),
                 'Body' => $fileContent,
             ];
+            if ($this->serverSideEncryption) {
+                $args['ServerSideEncryption'] = $this->serverSideEncryption;
+            }
             $commands[] = $amazonS3->getCommand('PutObject', $args);
         }
         try {
@@ -583,6 +608,9 @@ class Bucket extends BucketSubDirTemplate
                 'Key' => $this->getFullFileName($bucketFileName),
                 'Body' => file_get_contents($srcFileName),
             ];
+            if ($this->serverSideEncryption) {
+                $args['ServerSideEncryption'] = $this->serverSideEncryption;
+            }
             $commands[] = $amazonS3->getCommand('PutObject', $args);
         }
         try {
