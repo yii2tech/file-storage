@@ -34,35 +34,11 @@ or add
 
 to the require section of your composer.json.
 
-If you wish to use Amazon S3 storage, you should also install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2.
-Either run
+If you wish to use Amazon S3 storage, see additional installation instructions in the class documentation of
+[yii2tech\filestorage\amazon\Storage](src/amazon/Storage.php).
 
-```
-php composer.phar require --prefer-dist aws/aws-sdk-php:~2.0
-```
-
-or add
-
-```json
-"aws/aws-sdk-php": "~2.0"
-```
-
-to the require section of your composer.json.
-
-If you wish to use MongoDB storage, you should also install [yiisoft/yii2-mongodb](https://github.com/yiisoft/yii2-mongodb) version 2.1.
-Either run
-
-```
-php composer.phar require --prefer-dist yiisoft/yii2-mongodb:~2.1.0
-```
-
-or add
-
-```json
-"yiisoft/yii2-mongodb": "2.1.0"
-```
-
-to the require section of your composer.json.
+If you wish to use MongoDB storage, see additional installation instructions in the class documentation of
+[yii2tech\filestorage\mongodb\Storage](src/mongodb/Storage.php).
 
 
 Usage
