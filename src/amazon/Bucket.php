@@ -7,9 +7,6 @@
 
 namespace yii2tech\filestorage\amazon;
 
-use Aws\Common\Enum\Region;
-use Aws\S3\Enum\CannedAcl;
-use yii\base\InvalidConfigException;
 use yii\log\Logger;
 use yii2tech\filestorage\BucketSubDirTemplate;
 
@@ -19,7 +16,7 @@ use yii2tech\filestorage\BucketSubDirTemplate;
  *
  * @see Storage
  * @see https://github.com/aws/aws-sdk-php
- * @see http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/service-s3.html
+ * @see https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/welcome.html
  *
  * @property string $urlName storage DNS URL name.
  * @method Storage getStorage()
@@ -31,38 +28,14 @@ class Bucket extends BucketSubDirTemplate
 {
     /**
      * @var string Amazon region name of the bucket.
-     * You can setup this value as a short alias of the real region name
-     * according the following map:
      *
-     * ```php
-     * 'us_e1' => \Aws\Common\Enum\Region::US_EAST_1
-     * 'us_w1' => \Aws\Common\Enum\Region::US_WEST_1
-     * 'us_w2' => \Aws\Common\Enum\Region::US_WEST_2
-     * 'eu_w1' => \Aws\Common\Enum\Region::EU_WEST_1
-     * 'apac_se1' => \Aws\Common\Enum\Region::AP_SOUTHEAST_1
-     * 'apac_se2' => \Aws\Common\Enum\Region::AP_SOUTHEAST_2
-     * 'apac_ne1' => \Aws\Common\Enum\Region::AP_NORTHEAST_1
-     * 'sa_e1' => \Aws\Common\Enum\Region::SA_EAST_1
-     * ```
-     *
-     * @see AmazonS3
+     * @see https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints
      */
-    public $region = 'eu_w1';
+    public $region = 'eu-west-1';
     /**
      * @var mixed bucket ACL policy.
-     * You can setup this value as a short alias of the real region name
-     * according the following map:
      *
-     * ```php
-     * 'private' => \Aws\S3\Enum\CannedAcl::PRIVATE_ACCESS
-     * 'public' =>\Aws\S3\Enum\CannedAcl::PUBLIC_READ
-     * 'open' =>\Aws\S3\Enum\CannedAcl::PUBLIC_READ_WRITE
-     * 'auth_read' =>\Aws\S3\Enum\CannedAcl::AUTHENTICATED_READ
-     * 'owner_read' =>\Aws\S3\Enum\CannedAcl::BUCKET_OWNER_READ
-     * 'owner_full_control' =>\Aws\S3\Enum\CannedAcl::BUCKET_OWNER_FULL_CONTROL
-     * ```
-     *
-     * @see AmazonS3
+     * @see https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
      */
     public $acl = 'private';
 
@@ -74,17 +47,6 @@ class Bucket extends BucketSubDirTemplate
      * @see \Aws\S3\S3Client::isValidBucketName()
      */
     private $_urlName;
-    /**
-     * @var string actual value of [[region]].
-     * This field is for the internal usage only.
-     */
-    private $_actualRegion;
-    /**
-     * @var string actual value of [[acl]].
-     * This field is for the internal usage only.
-     */
-    private $_actualAcl;
-
 
     /**
      * @param string $urlName storage DNS URL name.
@@ -151,114 +113,6 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
-     * Returns the actual Amazon region value from the [[region]].
-     * @throws InvalidConfigException on invalid region.
-     * @return string actual Amazon region.
-     */
-    protected function getActualRegion()
-    {
-        if (empty($this->_actualRegion)) {
-            $region = $this->region;
-            if (empty($region)) {
-                throw new InvalidConfigException('"' . get_class($this) . '::region" can not be empty.');
-            }
-            $this->_actualRegion = $this->fetchActualRegion($region);
-        }
-        return $this->_actualRegion;
-    }
-
-    /**
-     * Returns the actual Amazon region value from the [[region]].
-     * @param string $region raw region value.
-     * @return string actual Amazon region.
-     */
-    protected function fetchActualRegion($region)
-    {
-        switch ($region) {
-            // USA :
-            case 'us_e1': {
-                return Region::US_EAST_1;
-            }
-            case 'us_w1': {
-                return Region::US_WEST_1;
-            }
-            case 'us_w2': {
-                return Region::US_WEST_2;
-            }
-            // Europe :
-            case 'eu_w1': {
-                return Region::EU_WEST_1;
-            }
-            // AP :
-            case 'apac_se1': {
-                return Region::AP_SOUTHEAST_1;
-            }
-            case 'apac_se2': {
-                return Region::AP_SOUTHEAST_2;
-            }
-            case 'apac_ne1': {
-                return Region::AP_NORTHEAST_1;
-            }
-            // South America :
-            case 'sa_e1': {
-                return Region::SA_EAST_1;
-            }
-            default: {
-                return $region;
-            }
-        }
-    }
-
-    /**
-     * Returns the actual Amazon bucket ACL value from the [[acl]].
-     * @throws InvalidConfigException on invalid ACL.
-     * @return string actual Amazon bucket ACL.
-     */
-    protected function getActualAcl()
-    {
-        if (empty($this->_actualAcl)) {
-            $acl = $this->acl;
-            if (empty($acl)) {
-                throw new InvalidConfigException('"' . get_class($this) . '::acl" can not be empty.');
-            }
-            $this->_actualAcl = $this->fetchActualAcl($acl);
-        }
-        return $this->_actualAcl;
-    }
-
-    /**
-     * Returns the actual Amazon bucket ACL value from the [[acl]]
-     * @param string $acl raw ACL value.
-     * @return string actual Amazon bucket ACL.
-     */
-    protected function fetchActualAcl($acl)
-    {
-        switch ($acl) {
-            case 'private': {
-                return CannedAcl::PRIVATE_ACCESS;
-            }
-            case 'public': {
-                return CannedAcl::PUBLIC_READ;
-            }
-            case 'open': {
-                return CannedAcl::PUBLIC_READ_WRITE;
-            }
-            case 'auth_read': {
-                return CannedAcl::AUTHENTICATED_READ;
-            }
-            case 'owner_read': {
-                return CannedAcl::BUCKET_OWNER_READ;
-            }
-            case 'owner_full_control': {
-                return CannedAcl::BUCKET_OWNER_FULL_CONTROL;
-            }
-            default: {
-                return $acl;
-            }
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function create()
@@ -266,8 +120,8 @@ class Bucket extends BucketSubDirTemplate
         $amazonS3 = $this->getStorage()->getAmazonS3();
         $amazonS3->createBucket([
             'Bucket' => $this->getUrlName(),
-            'LocationConstraint' => $this->getActualRegion(),
-            'ACL' => $this->getActualAcl(),
+            'LocationConstraint' => $this->region,
+            'ACL' => $this->acl,
         ]);
         $this->log('bucket has been created with URL name "' . $this->getUrlName() . '"');
         return true;
@@ -315,7 +169,7 @@ class Bucket extends BucketSubDirTemplate
             'Bucket' => $this->getUrlName(),
             'Key' => $fileName,
             'Body' => $content,
-            'ACL' => $this->getActualAcl(),
+            'ACL' => $this->acl,
         ];
         try {
             $amazonS3->putObject($args);
@@ -546,7 +400,7 @@ class Bucket extends BucketSubDirTemplate
         foreach ($fileContents as $fileName => $fileContent) {
             $args = [
                 'Bucket' => $this->getUrlName(),
-                'ACL' => $this->getActualAcl(),
+                'ACL' => $this->acl,
                 'Key' => $this->getFullFileName($fileName),
                 'Body' => $fileContent,
             ];
@@ -579,7 +433,7 @@ class Bucket extends BucketSubDirTemplate
         foreach ($filesMap as $srcFileName => $bucketFileName) {
             $args = [
                 'Bucket' => $this->getUrlName(),
-                'ACL' => $this->getActualAcl(),
+                'ACL' => $this->acl,
                 'Key' => $this->getFullFileName($bucketFileName),
                 'Body' => file_get_contents($srcFileName),
             ];

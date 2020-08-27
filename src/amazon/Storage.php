@@ -14,10 +14,10 @@ use yii2tech\filestorage\BaseStorage;
 /**
  * Storage introduces the file storage based on Amazon Simple Storage Service (S3).
  *
- * In order to use this storage you need to install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2:
+ * In order to use this storage you need to install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 3:
  *
  * ```
- * composer require --prefer-dist aws/aws-sdk-php:~2.0
+ * composer require --prefer-dist aws/aws-sdk-php:^3.0
  * ```
  *
  * Configuration example:
@@ -29,11 +29,11 @@ use yii2tech\filestorage\BaseStorage;
  *     'awsSecretKey' => 'AWSSECRETKEY',
  *     'buckets' => [
  *         'tempFiles' => [
- *             'region' => 'eu_w1',
+ *             'region' => 'eu-west-1',
  *             'acl' => 'private',
  *         ],
  *         'imageFiles' => [
- *             'region' => 'eu_w1',
+ *             'region' => 'eu-west-1',
  *             'acl' => 'public',
  *         ],
  *     ]
@@ -42,7 +42,7 @@ use yii2tech\filestorage\BaseStorage;
  *
  * @see Bucket
  * @see https://github.com/aws/aws-sdk-php
- * @see http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/service-s3.html
+ * @see https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/welcome.html
  *
  * @property S3Client $amazonS3 instance of the Amazon S3 client.
  * @method Bucket getBucket($bucketName)
@@ -114,8 +114,10 @@ class Storage extends BaseStorage
     protected function createAmazonS3()
     {
         $clientConfig = array_merge($this->amazonS3Config, [
-            'key' => $this->awsKey,
-            'secret' => $this->awsSecretKey,
+            'credentials' => [
+                'key' => $this->awsKey,
+                'secret' => $this->awsSecretKey
+            ]
         ]);
         return S3Client::factory($clientConfig);
     }
