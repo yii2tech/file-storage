@@ -4,7 +4,7 @@ Yii 2 File Storage extension Change Log
 1.2.0, Under development
 ------------------------
 
-- Enh #19: Amazon aws-sdk-php v3 compatibility (leandrogehlen)
+- Enh #22: Amazon aws-sdk-php v3 compatibility (leandrogehlen)
 
 
 1.1.4, February 9, 2018
