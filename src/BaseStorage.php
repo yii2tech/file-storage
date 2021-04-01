@@ -117,7 +117,9 @@ abstract class BaseStorage extends Component implements StorageInterface
         if (is_object($bucketData)) {
             $bucketInstance = $bucketData;
         } else {
-            $bucketData['name'] = $bucketName;
+            if (!array_key_exists('name' , $bucketData)) {
+                $bucketData['name'] = $bucketName;
+            }
             $bucketInstance = $this->createBucketInstance($bucketData);
             $this->_buckets[$bucketName] = $bucketInstance;
         }
