@@ -180,6 +180,29 @@ return [
 ];
 ```
 
+You can specify a bucket name that is different from the internal name.
+In the following example the bucket is retrieved with `Wii::$app->fileStorage->getBucket('images');`
+but will be stored in the `my-image-bucket` bucket. 
+```php
+return [
+    'components' => [
+        'fileStorage' => [
+            'class' => 'yii2tech\filestorage\amazon\Storage',
+            'buckets' => [
+                'buckets' => [
+                    'images' => [
+                        'name' => 'my-image-bucket',
+                        'region' => 'us-west-1',
+                    ],
+                ],
+            ]
+        ],
+        // ...
+    ],
+    // ...
+];
+```
+
 You can also combine several different storages using [[\yii2tech\filestorage\hub\Storage]], if necessary:
 
 ```php
