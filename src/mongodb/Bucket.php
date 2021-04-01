@@ -157,7 +157,7 @@ class Bucket extends BaseBucket
     /**
      * {@inheritdoc}
      */
-    public function saveFileContent($fileName, $content)
+    public function saveFileContent($fileName, $content, $metaData = [])
     {
         $this->createFileUpload($fileName)->addContent($content)->complete();
         $this->log("file '{$fileName}' has been saved");
@@ -201,7 +201,7 @@ class Bucket extends BaseBucket
     /**
      * {@inheritdoc}
      */
-    public function copyFileIn($srcFileName, $fileName)
+    public function copyFileIn($srcFileName, $fileName, $metaData = [])
     {
         $this->createFileUpload($fileName)->addFile($srcFileName)->complete();
         $this->log("file '{$srcFileName}' has been copied to '{$fileName}'");

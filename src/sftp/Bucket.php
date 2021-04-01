@@ -193,7 +193,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    public function saveFileContent($fileName, $content)
+    public function saveFileContent($fileName, $content, $metaData = [])
     {
         $sftpFileName = $this->prepareSftpFileName($fileName);
         $writtenBytesCount = file_put_contents($sftpFileName, $content);
@@ -251,7 +251,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    public function copyFileIn($srcFileName, $fileName)
+    public function copyFileIn($srcFileName, $fileName, $metaData = [])
     {
         $sftpFileName = $this->prepareSftpFileName($fileName);
         $result = copy($srcFileName, $sftpFileName);

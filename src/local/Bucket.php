@@ -214,7 +214,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    public function saveFileContent($fileName, $content)
+    public function saveFileContent($fileName, $content, $metaData = [])
     {
         $fullFileName = $this->resolveFullFileName($fileName);
         $writtenBytesCount = file_put_contents($fullFileName, $content);
@@ -269,7 +269,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    public function copyFileIn($srcFileName, $fileName)
+    public function copyFileIn($srcFileName, $fileName, $metaData = [])
     {
         $fullFileName = $this->resolveFullFileName($fileName);
         $result = copy($srcFileName, $fullFileName);
@@ -347,7 +347,7 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    protected function composeFileUrl($baseUrl, $fileName)
+    protected function composeFileUrl($baseUrl, $fileName, $includeBucketName = true)
     {
         $baseUrl .= '/' . $this->getBaseSubPath();
         $fileSubDir = $this->getFileSubDir($fileName);

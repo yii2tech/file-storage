@@ -66,9 +66,10 @@ interface BucketInterface
      * Saves content as new file.
      * @param string $fileName - new file name.
      * @param string $content - new file content.
+     * @param array $metaData - Meta data for file, implementation (if any) depends on bucket class
      * @return bool success.
      */
-    public function saveFileContent($fileName, $content);
+    public function saveFileContent($fileName, $content, $metaData = []);
 
     /**
      * Returns content of an existing file.
@@ -95,9 +96,10 @@ interface BucketInterface
      * Copies file from the OS file system into the bucket.
      * @param string $srcFileName - OS full file name.
      * @param string $fileName - new bucket file name.
+     * @param array $metaData - Meta data for file, implementation (if any) depends on bucket class
      * @return bool success.
      */
-    public function copyFileIn($srcFileName, $fileName);
+    public function copyFileIn($srcFileName, $fileName, $metaData = []);
 
     /**
      * Copies file from the bucket into the OS file system.
@@ -167,4 +169,30 @@ interface BucketInterface
      * @since 1.1.0
      */
     public function openFile($fileName, $mode, $context = null);
+
+    /**
+     * Sets the base URL, which should be used by [[BucketInterface::getFileUrl()]].
+     * Example values:
+     *
+     * ```php
+     * 'http://files.domain.com',
+     * '//files.domain.com',
+     * '@web/files',
+     * ['/file/download'],
+     * ```
+     *
+     * @param string|array|null $baseUrl web URL, which is specific for this buckets and will override the Storage::$baseUrl.
+     * If string given, the URL will be composed by pattern: `{baseUrl}/{fileName}`.
+     * If array given, it is considered as a route for URL creation via [[\yii\web\UrlManager]],
+     * bucket name will be added as `bucket` param, and file name will be added as `filename`.
+     * @since 1.2.0
+     */
+    public function setBaseUrl($baseUrl);
+
+    /**
+     * Returns the base URL, which should be used by [[BucketInterface::getFileUrl()]].
+     * @return string|array|null web URL, which is specific for this bucket.
+     * @since 1.2.0
+     */
+    public function getBaseUrl();
 }

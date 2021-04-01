@@ -142,9 +142,11 @@ abstract class BucketSubDirTemplate extends BaseBucket
     /**
      * {@inheritdoc}
      */
-    protected function composeFileUrl($baseUrl, $fileName)
+    protected function composeFileUrl($baseUrl, $fileName, $includeBucketName = true)
     {
-        $baseUrl = $baseUrl . '/' . urlencode($this->getName());
+        if ($includeBucketName) {
+            $baseUrl = $baseUrl . '/' . urlencode($this->getName());
+        }
 
         $fileSubDir = $this->getFileSubDir($fileName);
         if (!empty($fileSubDir)) {

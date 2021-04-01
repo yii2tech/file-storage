@@ -31,7 +31,12 @@ abstract class BaseBucket extends BaseObject implements BucketInterface
      * @var StorageInterface file storage, which owns the bucket.
      */
     private $_storage;
-
+    /**
+     * @var string|array web URL, which is specific for this bucket.
+     * You can setup this field as array, which will be treated as a route specification for [[\yii\helpers\Url::to()]].
+     * @since 1.2.0
+     */
+    private $_baseUrl;
 
     /**
      * Logs a message.
@@ -91,9 +96,35 @@ abstract class BaseBucket extends BaseObject implements BucketInterface
     /**
      * {@inheritdoc}
      */
+    public function setBaseUrl($baseUrl)
+    {
+        if (is_string($baseUrl)) {
+            $baseUrl = Yii::getAlias($baseUrl);
+        }
+        $this->_baseUrl = $baseUrl;
+    }
+
+    /**
+     * {@inheritdoc]
+     */
+    public function getBaseUrl()
+    {
+        return $this->_baseUrl;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFileUrl($fileName)
     {
-        $baseUrl = $this->getStorage()->getBaseUrl();
+        $baseUrl = $this->getBaseUrl();
+        if (empty($baseUrl)) {
+            $baseUrl = $this->getStorage()->getBaseUrl();
+            $includeBucketName = true;
+        } else {
+            $includeBucketName = false;
+        }
+
         if (is_array($baseUrl)) {
             $url = $baseUrl;
             $url['bucket'] = $this->getName();
@@ -101,7 +132,7 @@ abstract class BaseBucket extends BaseObject implements BucketInterface
             return Url::to($url);
         }
 
-        return $this->composeFileUrl($baseUrl, $fileName);
+        return $this->composeFileUrl($baseUrl, $fileName, $includeBucketName);
     }
 
     /**
@@ -109,11 +140,12 @@ abstract class BaseBucket extends BaseObject implements BucketInterface
      * This method is invoked at [[getFileUrl()]] in case base URL does not specify a URL route.
      * @param string|null $baseUrl storage base URL.
      * @param string $fileName self file name.
+     * @param bool $includeBucketName @since 1.2.0 Should the bucket name be included in the url
      * @return string file web URL.
      * @since 1.1.0
      */
-    protected function composeFileUrl($baseUrl, $fileName)
+    protected function composeFileUrl($baseUrl, $fileName, $includeBucketName = true)
     {
-        return $baseUrl . '/' . urlencode($this->getName()) . '/' . $fileName;
+        return $baseUrl . ($includeBucketName ? '/' . urlencode($this->getName()) : '') . '/' . $fileName;
     }
 }

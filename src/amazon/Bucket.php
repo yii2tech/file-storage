@@ -7,6 +7,11 @@
 
 namespace yii2tech\filestorage\amazon;
 
+use Aws\S3\BatchDelete;
+use Aws\S3\S3Client;
+use yii\base\InvalidConfigException;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\log\Logger;
 use yii2tech\filestorage\BucketSubDirTemplate;
 
@@ -18,6 +23,7 @@ use yii2tech\filestorage\BucketSubDirTemplate;
  * @see https://github.com/aws/aws-sdk-php
  * @see https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/welcome.html
  *
+ * @property S3Client $amazonS3 instance of the Amazon S3 client.
  * @property string $urlName storage DNS URL name.
  * @method Storage getStorage()
  *
@@ -27,17 +33,33 @@ use yii2tech\filestorage\BucketSubDirTemplate;
 class Bucket extends BucketSubDirTemplate
 {
     /**
+     * @var array additional configuration options for the S3 client of this bucket.
+     * Please refer to [[S3Client::__construct()]] for available options list.
+     * @see S3Client::__construct()
+     * @since 1.2.0
+     */
+    public $amazonS3Config = [];
+
+    /**
      * @var string Amazon region name of the bucket.
      *
      * @see https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints
      */
-    public $region = 'eu-west-1';
+    public $region = null;
+    
     /**
      * @var mixed bucket ACL policy.
      *
      * @see https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
      */
     public $acl = 'private';
+
+    public $autoCreateBucket = true;
+
+    /**
+     * @var S3Client instance of the Amazon S3 client.
+     */
+    private $_amazonS3;
 
     /**
      * @var string Storage DNS URL name.
@@ -47,6 +69,29 @@ class Bucket extends BucketSubDirTemplate
      * @see \Aws\S3\S3Client::isValidBucketName()
      */
     private $_urlName;
+
+    /**
+     * @param S3Client $amazonS3 Amazon S3 client.
+     * @throws InvalidConfigException on invalid argument.
+     */
+    public function setAmazonS3($amazonS3)
+    {
+        if (!is_object($amazonS3)) {
+            throw new InvalidConfigException('"' . get_class($this) . '::amazonS3" should be an object!');
+        }
+        $this->_amazonS3 = $amazonS3;
+    }
+
+    /**
+     * @return S3Client Amazon S3 client instance.
+     */
+    public function getAmazonS3()
+    {
+        if (!is_object($this->_amazonS3)) {
+            $this->_amazonS3 = $this->getStorage()->createAmazonS3($this->region, $this->amazonS3Config);
+        }
+        return $this->_amazonS3;
+    }
 
     /**
      * @param string $urlName storage DNS URL name.
@@ -117,7 +162,7 @@ class Bucket extends BucketSubDirTemplate
      */
     public function create()
     {
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
         $amazonS3->createBucket([
             'Bucket' => $this->getUrlName(),
             'LocationConstraint' => $this->region,
@@ -132,7 +177,7 @@ class Bucket extends BucketSubDirTemplate
      */
     public function destroy()
     {
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
         $amazonS3->deleteBucket([
             'Bucket' => $this->getUrlName(),
         ]);
@@ -149,7 +194,7 @@ class Bucket extends BucketSubDirTemplate
         if (isset($this->_internalCache['exists'])) {
             return true;
         }
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
         $result = $amazonS3->doesBucketExist($this->getUrlName());
         $this->_internalCache['exists'] = $result;
         return $result;
@@ -158,19 +203,23 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    public function saveFileContent($fileName, $content)
+    public function saveFileContent($fileName, $content, $metaData = [])
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
         $fileName = $this->getFullFileName($fileName);
-        $amazonS3 = $this->getStorage()->getAmazonS3();
-        $args = [
-            'Bucket' => $this->getUrlName(),
-            'Key' => $fileName,
-            'Body' => $content,
-            'ACL' => $this->acl,
-        ];
+        $amazonS3 = $this->getAmazonS3();
+        $args = ArrayHelper::merge(
+            [
+                'Bucket' => $this->getUrlName(),
+                'Key' => $fileName,
+                'Body' => $content,
+                'ACL' => $this->acl,
+            ],
+            $metaData
+        );
+
         try {
             $amazonS3->putObject($args);
             $this->log("file '{$fileName}' has been saved");
@@ -187,11 +236,11 @@ class Bucket extends BucketSubDirTemplate
      */
     public function getFileContent($fileName)
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
         $fileName = $this->getFullFileName($fileName);
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
         $args = [
             'Bucket' => $this->getUrlName(),
             'Key' => $fileName,
@@ -207,11 +256,11 @@ class Bucket extends BucketSubDirTemplate
      */
     public function deleteFile($fileName)
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
         $fileName = $this->getFullFileName($fileName);
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
         $args = [
             'Bucket' => $this->getUrlName(),
             'Key' => $fileName,
@@ -228,25 +277,48 @@ class Bucket extends BucketSubDirTemplate
     }
 
     /**
+     * @param string $prefix The prefix of file keys to delete
+     * @throws \Aws\S3\Exception\DeleteMultipleObjectsException
+     *
+     * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/class-Aws.S3.BatchDelete.html
+     * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-s3-2006-03-01.html#listobjects
+     */
+    public function batchDeleteFiles($prefix)
+    {
+        if ($this->autoCreateBucket && !$this->exists()) {
+            $this->create();
+        }
+
+        $amazonS3 = $this->getAmazonS3();
+        $listObjectsParams = [
+            'Bucket' => $this->getUrlName(),
+            'Prefix' => $prefix
+        ];
+        $delete = BatchDelete::fromListObjects($amazonS3, $listObjectsParams); // Asynchronously delete
+        $promise = $delete->promise(); // Force synchronous completion
+        $delete->delete();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function fileExists($fileName)
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
         $fileName = $this->getFullFileName($fileName);
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
         return $amazonS3->doesObjectExist($this->getUrlName(), $fileName);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function copyFileIn($srcFileName, $fileName)
+    public function copyFileIn($srcFileName, $fileName, $metaData = [])
     {
         $fileContent = file_get_contents($srcFileName);
-        return $this->saveFileContent($fileName, $fileContent);
+        return $this->saveFileContent($fileName, $fileContent, $metaData);
     }
 
     /**
@@ -264,7 +336,7 @@ class Bucket extends BucketSubDirTemplate
      */
     public function copyFileInternal($srcFile, $destFile)
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
 
@@ -276,14 +348,14 @@ class Bucket extends BucketSubDirTemplate
 
         $srcBucket = $storage->getBucket($srcFileRef['bucket']);
 
-        if (!$srcBucket->exists()) {
+        if ($this->autoCreateBucket && !$srcBucket->exists()) {
             $srcBucket->create();
             $srcFileRef['filename'] = $srcBucket->getFullFileName($srcFileRef['filename']);
             $srcFileRef['bucket'] = $srcBucket->getUrlName();
         }
 
         $destBucket = $storage->getBucket($destFileRef['bucket']);
-        if (!$destBucket->exists()) {
+        if ($this->autoCreateBucket && !$destBucket->exists()) {
             $destBucket->create();
             $destFileRef['filename'] = $destBucket->getFullFileName($destFileRef['filename']);
             $destFileRef['bucket'] = $destBucket->getUrlName();
@@ -345,17 +417,17 @@ class Bucket extends BucketSubDirTemplate
     /**
      * {@inheritdoc}
      */
-    protected function composeFileUrl($baseUrl, $fileName)
+    protected function composeFileUrl($baseUrl, $fileName, $includeBucketName = true)
     {
         if ($baseUrl === null) {
-            if (!$this->exists()) {
+            if ($this->autoCreateBucket && !$this->exists()) {
                 $this->create();
             }
             $fileName = $this->getFullFileName($fileName);
-            $amazonS3 = $this->getStorage()->getAmazonS3();
+            $amazonS3 = $this->getAmazonS3();
             return $amazonS3->getObjectUrl($this->getUrlName(), $fileName);
         }
-        return parent::composeFileUrl($baseUrl, $fileName);
+        return parent::composeFileUrl($baseUrl, $fileName, $includeBucketName);
     }
 
     /**
@@ -363,7 +435,7 @@ class Bucket extends BucketSubDirTemplate
      */
     public function openFile($fileName, $mode, $context = null)
     {
-        $this->getStorage()->registerStreamWrapper();
+        $this->getStorage()->registerStreamWrapper($this, true);
 
         $streamPath = 's3://' . $this->getUrlName() . '/' . $fileName;
 
@@ -387,23 +459,27 @@ class Bucket extends BucketSubDirTemplate
     /**
      * Saves given files content in parallel.
      * @param array $fileContents files content in format: fileName => fileContent
+     * @param array $metaData Meta data applied to all files
      * @return bool success.
      */
-    public function saveFileContentBatch(array $fileContents)
+    public function saveFileContentBatch(array $fileContents, $metaData = [])
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
 
         $commands = [];
         foreach ($fileContents as $fileName => $fileContent) {
-            $args = [
-                'Bucket' => $this->getUrlName(),
-                'ACL' => $this->acl,
-                'Key' => $this->getFullFileName($fileName),
-                'Body' => $fileContent,
-            ];
+            $args = ArrayHelper::merge(
+                [
+                    'Bucket' => $this->getUrlName(),
+                    'ACL' => $this->acl,
+                    'Key' => $this->getFullFileName($fileName),
+                    'Body' => $fileContent,
+                ],
+                $metaData
+            );
             $commands[] = $amazonS3->getCommand('PutObject', $args);
         }
         try {
@@ -424,10 +500,10 @@ class Bucket extends BucketSubDirTemplate
      */
     public function copyFileInBatch(array $filesMap)
     {
-        if (!$this->exists()) {
+        if ($this->autoCreateBucket && !$this->exists()) {
             $this->create();
         }
-        $amazonS3 = $this->getStorage()->getAmazonS3();
+        $amazonS3 = $this->getAmazonS3();
 
         $commands = [];
         foreach ($filesMap as $srcFileName => $bucketFileName) {
