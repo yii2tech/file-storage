@@ -44,7 +44,7 @@ php composer.phar require --prefer-dist aws/aws-sdk-php:~2.0
 or add
 
 ```json
-"aws/aws-sdk-php": "~2.0"
+"aws/aws-sdk-php": "~3.172"
 ```
 
 to the require section of your composer.json.
